@@ -303,6 +303,88 @@
   .refs ol { font-size: 0.92rem; color: var(--ink-soft); padding-left: 1.3rem; }
   .refs ol li { padding: 0.25rem 0; }
 
+  /* ── Comments ── */
+  .comments {
+    margin-top: 4rem;
+    padding-top: 1.6rem;
+    border-top: 1px solid var(--rule);
+    max-width: var(--measure);
+  }
+  .comments-eyebrow {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 0.6rem;
+    display: inline-flex; align-items: center; gap: 0.6rem;
+  }
+  .comments-eyebrow::before {
+    content: "§";
+    font-family: var(--display); font-style: italic;
+    font-size: 1rem; color: var(--accent-soft);
+    letter-spacing: 0;
+  }
+  .comments h2 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: 1.65rem;
+    margin: 0 0 0.6rem;
+    color: var(--ink);
+    letter-spacing: -0.005em;
+  }
+  .comments h2 em { font-style: italic; color: var(--accent); }
+  .comments-intro {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 0.98rem;
+    color: var(--ink-soft);
+    margin: 0 0 1.4rem;
+    max-width: var(--measure);
+  }
+  .comments-intro code {
+    font-family: var(--mono);
+    font-size: 0.82em;
+    font-style: normal;
+    background: var(--code-bg);
+    color: var(--code-ink);
+    padding: 1px 5px;
+    border-radius: 2px;
+  }
+
+  /* Container for the embedded Giscus widget */
+  .giscus-wrap {
+    margin-top: 1rem;
+    min-height: 200px;
+  }
+  /* Style giscus iframe to fit the editorial palette */
+  .giscus, .giscus-frame { width: 100%; }
+  .giscus-frame { border: 1px solid var(--rule); border-radius: 2px; }
+
+  /* Setup note shown until Giscus IDs are filled in. Remove once configured. */
+  .comments-setup {
+    background: var(--paper-edge);
+    border: 1px dashed var(--accent-soft);
+    border-radius: 2px;
+    padding: 1rem 1.1rem;
+    font-size: 0.92rem;
+    color: var(--ink-soft);
+    margin: 0 0 1.4rem;
+    max-width: var(--measure);
+  }
+  .comments-setup b { color: var(--accent); }
+  .comments-setup code {
+    font-family: var(--mono);
+    font-size: 0.82em;
+    background: rgba(255,255,255,0.5);
+    color: var(--code-ink);
+    padding: 1px 5px;
+    border-radius: 2px;
+  }
+  .comments-setup ol { margin: 0.6rem 0 0 1.2rem; padding: 0; }
+  .comments-setup ol li { padding: 0.1rem 0; }
+  .comments-setup a { color: var(--ink); }
+
   .post-foot {
     margin-top: 4rem;
     font-family: var(--mono);
@@ -853,8 +935,66 @@
     </ol>
   </div>
 
+  <!-- ═════════ COMMENTS ═════════ -->
+  <section class="comments" id="comments">
+    <span class="comments-eyebrow">Discussion</span>
+    <h2>Comments &amp; <em>responses</em></h2>
+    <p class="comments-intro">
+      Reply with your GitHub account. Comments are stored as
+      <a href="https://github.com/DiegoCao/DiegoCao.github.io/discussions">GitHub Discussions</a>
+      on this repo — there's no separate database, no third-party service holding your
+      data, and every thread is just a discussion you can read, edit, or moderate
+      from GitHub itself. The integration is powered by
+      <a href="https://giscus.app">Giscus</a>.
+    </p>
+
+    <!--
+      ─────────────────────────────────────────────────────────────
+      SETUP — one-time, after the PR merges:
+      1. Enable Discussions: repo Settings → Features → check "Discussions".
+      2. Install the Giscus app: https://github.com/apps/giscus → grant
+         access to DiegoCao/DiegoCao.github.io.
+      3. Create a Discussion category named "Comments" with the
+         "Announcement" type (only maintainers can post the first message,
+         others can reply).
+      4. Visit https://giscus.app and paste DiegoCao/DiegoCao.github.io.
+         Pick: Mapping = pathname, Category = Comments, Theme = light.
+      5. Copy the generated `data-repo-id` and `data-category-id` values
+         and paste them below in place of the REPLACE_ME tokens.
+      6. Delete the <div class="comments-setup">...</div> note below.
+      ─────────────────────────────────────────────────────────────
+    -->
+    <div class="comments-setup">
+      <b>One-time setup required.</b> Comments load from
+      <a href="https://giscus.app">Giscus</a> against this repo's GitHub Discussions.
+      To activate them, replace <code>REPLACE_WITH_REPO_ID</code> and
+      <code>REPLACE_WITH_CATEGORY_ID</code> in the Giscus script below with the
+      IDs from <a href="https://giscus.app">giscus.app</a>, then remove this note.
+      Full steps are in the HTML comment above this box (and in the PR description).
+    </div>
+
+    <div class="giscus-wrap">
+      <script src="https://giscus.app/client.js"
+              data-repo="DiegoCao/DiegoCao.github.io"
+              data-repo-id="REPLACE_WITH_REPO_ID"
+              data-category="Comments"
+              data-category-id="REPLACE_WITH_CATEGORY_ID"
+              data-mapping="pathname"
+              data-strict="0"
+              data-reactions-enabled="1"
+              data-emit-metadata="0"
+              data-input-position="bottom"
+              data-theme="light"
+              data-lang="en"
+              data-loading="lazy"
+              crossorigin="anonymous"
+              async>
+      </script>
+    </div>
+  </section>
+
   <div class="post-foot">
-    Hangrui Cao · 2026.05.28 · <a href="index.html">More writing</a> · <a href="../index.html#contact">Contact</a>
+    Hangrui Cao · 2026.05.28 · <a href="index.html">More writing</a> · <a href="../index.html#contact">Contact</a> · <a href="#comments">Comments</a>
   </div>
 
 </article>
