@@ -1,762 +1,1019 @@
-<!DOCTYPE HTML>
-<!--
-	Read Only by HTML5 UP
-	html5up.net | @ajlkn
-	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
--->
-<html>
-	<head>
-		<title>Hangrui Cao</title>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<link rel="stylesheet" href="assets/css/main.css" />
-	</head>
-	<body class="is-preload">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hangrui Cao — Computational Data Science, CMU</title>
+<meta name="description" content="Hangrui Cao — graduate student in Computational Data Science at Carnegie Mellon University. Research in machine learning, federated learning, and applied data science." />
 
-		<!-- Header -->
-			<section id="header">
-				<header>
-					<span class="image avatar"><img src="images/chravatar.png" alt="" /></span>
-					<h1 id="logo"><a href="#">Hangrui Cao</a></h1>
-					<p></p>
-				</header>
-				<nav id="nav">
-					<ul>
-						<li><a href="#one" class="active">About</a></li>
-						<li><a href="#two">Education</a></li>
-						<li><a href="#work">Work Experience</a></li>
-						<li><a href="#three">Researches</a></li>
-						<li><a href="#extra">Selected Projects</a></li>
-						<li><a href="#gallery">Gallery</a></li>
-						<li><a href="#four">Contact</a></li>
-					</ul>
-				</nav>
-				<footer>
-					<ul class="icons">
-						<li><a href="https://twitter.com/hangrui_cao" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
-						<li><a href="https://www.facebook.com/profile.php?id=100056007477914" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
-						<li><a href="https://www.instagram.com/hangruic/" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
-						<li><a href="https://www.linkedin.com/in/hangrui-cao-40a936193/" class="icon brands fa-linkedin"><span class="label">Email</span></a></li>
-						<li><a href="https://github.com/DiegoCao/" class="icon brands fa-github"><span class="label">Github</span></a></li>
-						<li><a href="mailto: hangrui@umich.edu" class="icon solid fa-envelope"><span class="label">Email</span></a></li>
-					</ul>
-				</footer>
-			</section>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
-		<!-- Wrapper -->
-			<div id="wrapper">
+<style>
+  :root {
+    --paper: #f7f3ec;
+    --paper-edge: #efe9dd;
+    --ink: #1a1714;
+    --ink-soft: #4a443d;
+    --ink-mute: #857d70;
+    --rule: #d8d0bf;
+    --accent: #8a3324;          /* burnt sienna / academic crimson */
+    --accent-soft: #b9692a;     /* muted ochre */
+    --highlight: #fff3c2;
+    --serif: "Newsreader", Georgia, "Times New Roman", serif;
+    --display: "Instrument Serif", "Newsreader", Georgia, serif;
+    --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+    --measure: 44rem;
+  }
 
-				<!-- Main -->
-					<div id="main">
+  * { box-sizing: border-box; }
 
-						<!-- One -->
-							<section id="one">
-								<div class="image main" data-position="center">
-									<img src="images/xueshan2.jpg" alt="" />
-								</div>
-								<div class="container">
-									<header class="major">
-										<h2>Hangrui Cao</h2>
-									</header>
-									<p>I am a graduate student major in <b>Computational Data Science</b> at Carnegie Mellon University, School of Computer Science.
-										 I graduated with a bachelor degree in <b>Computer Science</b>, minor in <b>Mathematics</b> at University of Michigan and a dual degree in
-										<b>Electrical and Computer Engineering</b> and Shanghai Jiao Tong University. My intersted fields include <b>Machine Learning & Data Analysis</b>,
-										 <b>Full-stack Engineering</b>, <b>Database</b>, <b>Web & App Development</b>
-									</p>
-									<p>
-										Links: <li><a href="files/Hangrui_Cao_CV_2021_Nov.pdf" class="button">CV (Nov 2021)</a></li>
-									</p>
-								</div>
-							</section>
+  html { scroll-behavior: smooth; }
 
+  body {
+    margin: 0;
+    background:
+      radial-gradient(1200px 600px at 80% -10%, rgba(185, 105, 42, 0.06), transparent 60%),
+      radial-gradient(900px 500px at -10% 110%, rgba(138, 51, 36, 0.05), transparent 60%),
+      var(--paper);
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: 17px;
+    line-height: 1.62;
+    font-feature-settings: "kern", "liga", "calt", "onum";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
 
-						<!-- Two -->
-							<section id="two">
-								<div class="container">
-									<h3>Experience</h3>
-										<h4>
-											Carnegie Mellon University, Pittsburgh, PA, US
-										</h4>
-										<i>
-											M.S in Computational Data Science in School of Computer Science | GPA : 4.0/4.0 | May 2022 - Dec 2023(Expected)
-										</i><br>
-										<div class="row">
-											<div class="column">
-												Selected Courses:
-												<span style="font-size: small; "><ul class="alt">
-													<li>
-														Intro to Computing Systems(A)
-													</li>
-													<li>Search Engine (Ongoing)</li>
-													<li>Machine Learning (Ongoing)</li>
-													<li>Foundations of Computational Data Science(Ongoing)</li>
-												</ul></span>
-											</div>
-										</div>		
-										
-										<h4>
-											University of Michigan, Ann Arbor, US
-										</h4>
-									<i> B.S.E in Computer Science | Minor in Mathematics | GPA: 3.98/4.00 | Sept 2020 - May 2022</i><br>	
-										<div class="row">
-											<div class="column">
-												Artificial Intelligence:
-												<span style="font-size: small; "><ul class="alt">
-													<li>Computer Vision (A)</li>
-													<li>Intro to Machine Learning (A)</li>
-													<li>Conversation AI (A)</li>
-													<li>Human Computer Interaction(A+)</li>
-													<li>Natural Language Processing(A)</li>
-												</ul></span>
-											</div>
+  /* Paper grain overlay */
+  body::before {
+    content: "";
+    position: fixed; inset: 0;
+    pointer-events: none;
+    background-image:
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.1  0 0 0 0 0.09  0 0 0 0 0.07  0 0 0 0.045 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    opacity: 0.55;
+    mix-blend-mode: multiply;
+    z-index: 999;
+  }
 
-											<div class="column">
-												System & Programming
-												<span style="font-size: small; "><ul class="alt">
-													<li>Database and Management System (A+)</li>
-													<li>Foundations of Computer Science (A)</li>
-													<li>Data Structure and Algorithms (A)</li>
-													<li>Intro to Computer Organization (A)</li>
-													<li>Computer Networks (A+)</li>
-												</ul></span>
-												</div>
-											<div class="column">
-												Mathematics
-												<span style="font-size: small; "><ul class="alt">
-													<li>Numerical Analysis (A)</li>
-													<li>Matrix Theory (A)</li>
-													<li>Algorithms (A)</li>
-													<!-- <li>Probability Theory (A)</li> -->
-												</ul></span>
-											  </div>
-										</div>
-										
-									
-										<h4>
-											Shanghai Jiao Tong University, Shanghai, China
-										</h4>
-									<i> B.S.E in Electrical and Computer Engineering | GPA: 3.874/4.00 | Sept 2018 - Aug 2022</i><br>
-										
-									<div class="row">
-										<div class="column">
-											Electrical and Computer Engineering
-										  <span style="font-size: small; "><ul class="alt">
-											  <li>Programming and Data Structure (A+)</li>
-											  <li>Logic Design (A)</li>
-											  <li>Electronic Circuits(A)</li>
-										  </ul></span>
-										</div>
-										<div class="column">
-											Engineering Foundations
-											<span style="font-size: small; "><ul class="alt">
-												<li>
-													Introduction to Engineering(A+)
-												</li>
-												<li>
-													Introduction to Computer and Programming (A+)
-												</li>
-												<li>
-													Probablistic Methods in Engineering (A)
-												</li>
-												<li></li>
-											</ul></span>
-										  </div>
-										<div class="column">
-											Mathematics & Physic
-										  <span style="font-size: small; "><ul class="alt">
-											  <li>Discrete Mathematics (A)</li>
-											  <li>Honors Mathematics II-IV (A-, A+)</li>
-											  <li>Honors Physics I & II(A, A+)</li>
-										  </ul></span>
-										</div>
-								  </div>
-								  	<h4>
-										  Ritsumeikan University
-									  </h4>
-									  <i>Winter Program | Jan 2020 - Feb 2020 </i>
-										
+  a {
+    color: var(--ink);
+    text-decoration: none;
+    background-image: linear-gradient(var(--accent), var(--accent));
+    background-repeat: no-repeat;
+    background-size: 100% 1px;
+    background-position: 0 100%;
+    transition: color 160ms ease, background-size 200ms ease;
+  }
+  a:hover {
+    color: var(--accent);
+    background-size: 100% 2px;
+  }
+  a.bare {
+    background: none;
+    color: var(--ink-soft);
+  }
+  a.bare:hover { color: var(--accent); }
 
-									<!-- <ul class="feature-icons">
-										<li class="icon solid fa-code">Write all the code</li>
-										<li class="icon solid fa-cubes">Stack small boxes</li>
-										<li class="icon solid fa-book">Read books and stuff</li>
-										<li class="icon solid fa-coffee">Drink much coffee</li>
-										<li class="icon solid fa-bolt">Lightning bolt</li>
-										<li class="icon solid fa-users">Shadow clone technique</li>
-									</ul> -->
-								</div>
-							</section>
+  /* ───────── Top bar ───────── */
+  .topbar {
+    position: sticky; top: 0; z-index: 50;
+    backdrop-filter: blur(8px) saturate(1.1);
+    -webkit-backdrop-filter: blur(8px) saturate(1.1);
+    background: rgba(247, 243, 236, 0.78);
+    border-bottom: 1px solid var(--rule);
+  }
+  .topbar-inner {
+    max-width: 56rem;
+    margin: 0 auto;
+    padding: 0.85rem 1.5rem;
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: 1.5rem;
+  }
+  .brand {
+    font-family: var(--display);
+    font-size: 1.25rem;
+    letter-spacing: 0.01em;
+    background: none;
+  }
+  .brand .dot { color: var(--accent); }
+  nav.primary {
+    display: flex; gap: 1.4rem;
+    font-family: var(--mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  nav.primary a {
+    background: none;
+    color: var(--ink-soft);
+    border-bottom: 1px dashed transparent;
+    padding-bottom: 2px;
+  }
+  nav.primary a:hover { color: var(--accent); border-bottom-color: var(--accent); }
 
-							<section id = "work">
-								<div class="container">
-									<h3>Work Experience</h3>
-								<div class="features">
-										<article>
-											<a href="images/Zoo.png" class="image fit thumb">
-												<img src="images/Zoo.png" alt="" />
-											</a>
-											<div class="inner">
-												<h4>Deep Learning Software Intern at Intel</h4>
-												<p>
-													[<a href="https://github.com/DiegoCao/analytics-zoo">Public Code</a>]
-												</p>
-												<ul>
-												<li>
-													 Implemented machine learning models such as XGBoost and ResNet with Scala and Java which enhanced training speed by 9.8%
-												</li>
-												<li>
- 													Developed model inference pipeline with Python and OpenVino and designed YOLOv3 model to detect cigarettes in photos
-												</li>
-												<li>
- 													Engineered and revised PPML module, docker file and unit tests to effectively support new graphene version 1.2RC and Intel-sgx
-												</li>
-												<li>
-													Deployed federated learning framework (FATE) in Intel-sgx and tested model inference for cluster serving with Flink & Spark
-												</li>
-											</div>
-										</article>
-										<article>
-											<a href="images/MDP_cover.png" class="image fit thumb">
-												<img src="images/MDP_cover.png" alt="" />
-											</a>
-											<div class="inner">
-												<h4>Machine Learning Intern & Research Assistant at Transportation Research Institute, University of Michigan</h4>
-												<p>
-													[<a href="files/Shaky_ground_truth_presentation.pdf"> Introductary Slides</a>]
-												</p>
-												<ul>
-													<li>Instructed by Professor <a href="https://umtri.umich.edu/people/flannagan-carol/">Carol Flannagan</a>.</li>
-													<li>Developed a light-weight multi-class CNN model to classify drivers' behavior with OpenCV and achieved 90.2% accuracy</li>
-													<li>
-														Designed loss functions, confident learning and probability model to resolve the uncertainty problem “Shaky Ground Truth”
-													</li>
-													<li>
-														Implemented Bayesian CNN to consider probabilities distribution for weights and obtained Aleatoric uncertainty 0.0162
-													</li>
-													<li>
-														Investigate different eye gaze software and built a system to gather labeler and drivers’ eye gaze data with PyGaze
-													</li>
-												</ul>
-											</div>
-										</article>
-									</div>
-								</div>
-							</section>
-							
-						<!-- Three -->
-							<section id="three">
-								<div class="container">
-									<h3>Personal Projects</h3>
-									<p>I've participated in research projects related to machine learning, distributed systems, mobile computing, data analysis</p>
-									<div class="features">
-										<article>
-											<a href="images/pic.png" class="image fit thumb">
-												<img src="images/pic.png" alt="" />
-											</a>
-											<div class="inner">
-												<h4>Birds of a Feather Help: Context-aware Client Selection for Efficient Federated
-													Learning</h4>
-													<p>
-														[<a href="files/Dependence_aware_client_selection_for_FL_.pdf">Paper</a>] Accepted by <a href="https://federated-learning.org/fl-aaai-2022/">FL-AAAI-22</a> for oral presentation
-												</p>
-												<ul>
-													<li>Instructed by Professor <a href="https://sites.ji.sjtu.edu.cn/yifei-zhu/">Yifei Zhu</a>.</li>
-													<li>Invent a novel neural combinatorial contextual bandit (NCCB) to intelligently select clients in each federated round
-														meanwhile ensures the privacy requirement in federated learning. The method surpassed the state-of-art client selection(Oort) in terms
-														of speed and final accuracy.</li>
-												</ul>
-											</div>
-										</article>
+  @media (max-width: 720px) {
+    .topbar-inner { flex-direction: column; align-items: flex-start; gap: 0.6rem; }
+    nav.primary { flex-wrap: wrap; gap: 0.85rem 1.1rem; font-size: 0.68rem; }
+  }
 
+  /* ───────── Layout ───────── */
+  main {
+    max-width: 56rem;
+    margin: 0 auto;
+    padding: 3.5rem 1.5rem 6rem;
+  }
 
+  section { scroll-margin-top: 5rem; }
 
-										<article>
-											<a href="images/emoji_sample.png" class="image fit thumb">
-												<img src="images/emoji_sample.png" alt="" />
-											</a>
-											<div class="inner">
-												<h4>Large data analysis and group work pattern recognition with Github Archive Dataset </h4>
-													<!-- <p>
-														[<a href="files/Dependence_aware_client_selection_for_FL_.pdf">Paper in Submission</a>]
-												</p> -->
-												<ul>
-													<li>Instructed by Professor <a href="http://www-personal.umich.edu/~qmei/">Qiaozhu Mei</a>.</li>
-													<li>
-														Present a large-scale empirical study to how sentimental emoji and text usage relates to Github workers' behaviour with different metrics,
-														Methods include GNN (for social graph embedding), LINE(Large-scale information network embedding), Regression, Cluster, NLP processing.
-													</li>
+  .section-label {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: inline-flex; align-items: center; gap: 0.7rem;
+    margin: 0 0 1.6rem;
+  }
+  .section-label::before {
+    content: "§"; font-family: var(--display); font-style: italic;
+    font-size: 1.1rem; color: var(--accent-soft); letter-spacing: 0;
+  }
 
-												</ul>
-											</div>
-										</article>
-										<article>
+  h2.section-title {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(1.7rem, 3.4vw, 2.3rem);
+    line-height: 1.15;
+    margin: 0 0 1.8rem;
+    letter-spacing: -0.005em;
+  }
+  h2.section-title em { color: var(--accent); font-style: italic; }
 
-											<a href="images/cac.jpg" class="image fit thumb">
-												<img src="images/cac.jpg" alt="" />
-											</a>
-											<div class="inner">
-												<h4>Networked Control System Under Denial-of-Service Attack Simluation</h4>
-													<p>
-														[<a href="files/2020CACpaper.pdf">Paper in CAC 2020</a>]
-													</p>
-												<ul>
-													<li>Instructed by Professor <a href="https://www.researchgate.net/profile/Jing-Wu-159">Jing Wu</a>.</li>
-													<li>Implemented a networked control system, simulation of DoS Attack in Networked Control System Using TrueTime</li>
-												</ul>
-											</div>
-										</article>
-									</div>
-								</div>
-							</section>
-							<section id = "extra">
-								<div class="container">
-									<h3>Selected Course Projects</h3>
-										<div class="features">
-										<article>
-											<a href="images/442photo.png" class="image fit thumb">
-												<img src="images/442photo.png" alt="" />
-											</a>
-											<div class="inner">
-												<h4>Automatic Image Colorization with CNN and GAN</h4>
-												<p>
-													[<a href="https://web.eecs.umich.edu/~justincj/teaching/eecs442/projects/WI2021/pdfs/068.pdf">Course Paper</a>]
-													[<a href="https://github.com/DiegoCao/eecs442_proj.git">Code</a>]
-												</p>
-												<ul>
-													<li>I implemented GAN(Generative Adversial Networks) for image colorization and compared it with classification approaches in terms of PSNR and SSIM. </li>
+  .rule {
+    border: 0;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--rule) 20%, var(--rule) 80%, transparent);
+    margin: 4.5rem 0;
+  }
 
+  /* ───────── Hero ───────── */
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr 180px;
+    gap: 2.2rem;
+    align-items: start;
+    padding-top: 1.5rem;
+  }
+  .hero-meta {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    margin-bottom: 1rem;
+  }
+  .hero-meta .pill {
+    border: 1px solid var(--rule);
+    padding: 2px 8px;
+    border-radius: 999px;
+    margin-right: 0.4rem;
+  }
+  h1.hero-name {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(2.6rem, 6vw, 4rem);
+    line-height: 1.02;
+    margin: 0 0 0.35rem;
+    letter-spacing: -0.015em;
+  }
+  h1.hero-name em {
+    font-style: italic;
+    color: var(--accent);
+    text-decoration: underline;
+    text-decoration-color: var(--accent-soft);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 6px;
+  }
+  .hero-role {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 1.1rem;
+    color: var(--ink-soft);
+    margin: 0 0 1.4rem;
+  }
+  .hero-bio {
+    max-width: var(--measure);
+    color: var(--ink-soft);
+    font-size: 1.02rem;
+  }
+  .hero-bio b { color: var(--ink); font-weight: 600; }
 
-											</div>
-										</article>
-										<article>
-											<a href="images/dashboard.png" class="image fit thumb">
-												<img src="images/dashboard.png" alt="" />
-											</a>
-											<div class="inner">
-												<h4>Real-time Carbon Emission Evaluation and Optimization for Future Low-Carbon Buildings</h4>
-												<p>
-												[<a href="https://diegocao-streamweb-app-ucjt6n.streamlitapp.com/">Website</a>]
-												</p>
-												<ul>
-													<li>
-														In this project, we use reinforcement learning based method to control carbon emission and power consumption in Large Buildings
-													</li>
-													<li>
-														Researched multiple software for building carbon emission simulation
-													</li>
-													<li>
-														Implemented simulation, data processing and analyzing pipeline and built a real-time database backend
-													</li>
-													<li>
-														Dveloped a website with Real-time tracking dashboard function to track our strategies performance.
-													</li>
+  .portrait {
+    position: relative;
+    width: 180px; height: 220px;
+    overflow: hidden;
+    border-radius: 2px;
+    box-shadow:
+      0 1px 0 var(--rule),
+      0 12px 30px -18px rgba(26, 23, 20, 0.4);
+    transform: rotate(-1.2deg);
+    transition: transform 400ms cubic-bezier(.2,.7,.2,1);
+  }
+  .portrait:hover { transform: rotate(0deg); }
+  .portrait img {
+    width: 100%; height: 100%; object-fit: cover;
+    filter: saturate(0.92) contrast(1.02);
+  }
+  .portrait::after {
+    content: "";
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(247,243,236,0) 70%, rgba(247,243,236,0.18));
+    pointer-events: none;
+  }
+  .portrait-caption {
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    text-align: center;
+    margin-top: 0.6rem;
+  }
 
-											</div>
-										</article>
+  .hero-links {
+    margin-top: 1.6rem;
+    display: flex; flex-wrap: wrap; gap: 0.55rem 0.8rem;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+  }
+  .hero-links a {
+    background: none;
+    border: 1px solid var(--rule);
+    padding: 6px 12px;
+    border-radius: 2px;
+    color: var(--ink);
+    transition: all 160ms ease;
+  }
+  .hero-links a:hover {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+  }
+  .hero-links a.primary {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+  }
+  .hero-links a.primary:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
 
-										<article>
-											<a href="images/emai_voice.png" class="image fit thumb">
-												<img src="images/emai_voice.png" alt="" />
-											</a>
-											<div class="inner">
-												<h4>Email Voice Assistant </h4>
-												<p>
-													[<a href="https://web.eecs.umich.edu/~justincj/teaching/eecs442/projects/WI2021/pdfs/068.pdf">Course Paper</a>]
-													[<a href="https://github.com/DiegoCao/email-voice-assistant">Code</a>]
-												</p>
-												<ul>
-													<li>
-														Designed interface for smart voice email control with React.js, and backend pipeline to process email request with Flask
-													</li>
-													<li>
-														Developed speech-to-text model with 7.8% WER and generated smart reply to users with Dialogflow and Rasa
-													</li>
-											</div>
-										</article>
-									</div>
-								</div>
-							</section>
-						<!-- Four -->
-							<section id="four">
-								<div class="container">
-									<h3>Contact Me</h3>
-									<p>Feel Free to leave your message here!</p>
-									<form method="post" action="#">
-										<div class="row gtr-uniform">
-											<div class="col-6 col-12-xsmall"><input type="text" name="name" id="name" placeholder="Name" /></div>
-											<div class="col-6 col-12-xsmall"><input type="email" name="email" id="email" placeholder="Email" /></div>
-											<div class="col-12"><input type="text" name="subject" id="subject" placeholder="Subject" /></div>
-											<div class="col-12"><textarea name="message" id="message" placeholder="Message" rows="6"></textarea></div>
-											<div class="col-12">
-												<ul class="actions">
-													<li><input type="submit" class="primary" value="Send Message" /></li>
-													<li><input type="reset" value="Reset Form" /></li>
-												</ul>
-											</div>
-										</div>
-									</form>
-								</div>
-								
+  @media (max-width: 720px) {
+    .hero { grid-template-columns: 1fr; }
+    .portrait { order: -1; width: 140px; height: 170px; }
+  }
 
-								<!-- <div>
-									<script type="text/javascript" id="clustrmaps" src="//cdn.clustrmaps.com/map_v2.js?cl=b7bbce&w=a&t=n&d=BdM4F6rm-cbia-mSJD86LvnTCb-KIWmzSzcrrruhefk&co=ffffff&cmn=fff200&cmo=ff0000&ct=000000"></script>
-								</div> -->
-							</section>
+  /* ───────── News ───────── */
+  .news-list {
+    list-style: none;
+    margin: 0; padding: 0;
+    font-size: 0.98rem;
+  }
+  .news-list li {
+    display: grid;
+    grid-template-columns: 6.5rem 1fr;
+    gap: 1.2rem;
+    padding: 0.7rem 0;
+    border-bottom: 1px dotted var(--rule);
+  }
+  .news-list li:last-child { border-bottom: none; }
+  .news-list .date {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    color: var(--accent);
+    padding-top: 3px;
+  }
+  .news-list .desc { color: var(--ink-soft); }
+  .news-list .desc b { color: var(--ink); font-weight: 600; }
 
-							
+  /* ───────── Publications ───────── */
+  .pub {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 1.6rem;
+    padding: 1.4rem 0;
+    border-bottom: 1px solid var(--rule);
+    align-items: start;
+  }
+  .pub:last-child { border-bottom: none; }
+  .pub-thumb {
+    width: 140px; aspect-ratio: 4 / 3;
+    overflow: hidden;
+    border: 1px solid var(--rule);
+    background: var(--paper-edge);
+    border-radius: 2px;
+    transition: transform 250ms ease;
+  }
+  .pub-thumb:hover { transform: translateY(-2px); }
+  .pub-thumb img {
+    width: 100%; height: 100%; object-fit: cover;
+    filter: saturate(0.95);
+  }
+  .pub-body h3 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: 1.35rem;
+    line-height: 1.25;
+    margin: 0 0 0.35rem;
+    letter-spacing: -0.005em;
+  }
+  .pub-authors {
+    font-size: 0.95rem;
+    color: var(--ink-soft);
+    margin: 0 0 0.25rem;
+  }
+  .pub-authors .me { color: var(--ink); font-weight: 600; border-bottom: 1px solid var(--accent-soft); }
+  .pub-venue {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 0.95rem;
+    color: var(--ink-soft);
+    margin: 0 0 0.6rem;
+  }
+  .pub-venue .badge {
+    font-family: var(--mono);
+    font-style: normal;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: var(--highlight);
+    color: var(--ink);
+    padding: 2px 7px;
+    margin-left: 0.4rem;
+    border-radius: 2px;
+  }
+  .pub-notes {
+    font-size: 0.95rem;
+    color: var(--ink-soft);
+    margin: 0 0 0.7rem;
+  }
+  .pub-links {
+    display: flex; flex-wrap: wrap; gap: 0.4rem;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .pub-links a {
+    background: none;
+    border: 1px solid var(--rule);
+    padding: 3px 9px;
+    border-radius: 2px;
+    color: var(--ink-soft);
+  }
+  .pub-links a:hover {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+  }
 
-						<!-- Five -->
-						<!--
-							<section id="five">
-								<div class="container">
-									<h3>Elements</h3>
+  @media (max-width: 600px) {
+    .pub { grid-template-columns: 1fr; }
+    .pub-thumb { width: 100%; max-width: 240px; }
+  }
 
-									<section>
-										<h4>Text</h4>
-										<p>This is <b>bold</b> and this is <strong>strong</strong>. This is <i>italic</i> and this is <em>emphasized</em>.
-										This is <sup>superscript</sup> text and this is <sub>subscript</sub> text.
-										This is <u>underlined</u> and this is code: <code>for (;;) { ... }</code>. Finally, <a href="#">this is a link</a>.</p>
-										<hr />
-										<header>
-											<h4>Heading with a Subtitle</h4>
-											<p>Lorem ipsum dolor sit amet nullam id egestas urna aliquam</p>
-										</header>
-										<p>Nunc lacinia ante nunc ac lobortis. Interdum adipiscing gravida odio porttitor sem non mi integer non faucibus ornare mi ut ante amet placerat aliquet. Volutpat eu sed ante lacinia sapien lorem accumsan varius montes viverra nibh in adipiscing blandit tempus accumsan.</p>
-										<header>
-											<h5>Heading with a Subtitle</h5>
-											<p>Lorem ipsum dolor sit amet nullam id egestas urna aliquam</p>
-										</header>
-										<p>Nunc lacinia ante nunc ac lobortis. Interdum adipiscing gravida odio porttitor sem non mi integer non faucibus ornare mi ut ante amet placerat aliquet. Volutpat eu sed ante lacinia sapien lorem accumsan varius montes viverra nibh in adipiscing blandit tempus accumsan.</p>
-										<hr />
-										<h2>Heading Level 2</h2>
-										<h3>Heading Level 3</h3>
-										<h4>Heading Level 4</h4>
-										<h5>Heading Level 5</h5>
-										<h6>Heading Level 6</h6>
-										<hr />
-										<h5>Blockquote</h5>
-										<blockquote>Fringilla nisl. Donec accumsan interdum nisi, quis tincidunt felis sagittis eget tempus euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing accumsan faucibus. Vestibulum ante ipsum primis in faucibus lorem ipsum dolor sit amet nullam adipiscing eu felis.</blockquote>
-										<h5>Preformatted</h5>
-										<pre><code>i = 0;
+  /* ───────── Experience ───────── */
+  .exp {
+    padding: 1.4rem 0;
+    border-bottom: 1px solid var(--rule);
+    display: grid;
+    grid-template-columns: 9rem 1fr;
+    gap: 1.6rem;
+  }
+  .exp:last-child { border-bottom: none; }
+  .exp-when {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    padding-top: 5px;
+  }
+  .exp-role {
+    font-family: var(--display);
+    font-size: 1.2rem;
+    font-weight: 400;
+    margin: 0 0 0.15rem;
+    line-height: 1.25;
+  }
+  .exp-org {
+    font-style: italic;
+    color: var(--ink-soft);
+    margin: 0 0 0.6rem;
+    font-size: 0.97rem;
+  }
+  .exp ul {
+    margin: 0; padding-left: 1.1rem;
+    color: var(--ink-soft);
+    font-size: 0.97rem;
+  }
+  .exp ul li { padding: 0.15rem 0; }
+  .exp ul li::marker { color: var(--accent-soft); }
 
-while (!deck.isInOrder()) {
-    print 'Iteration ' + i;
-    deck.shuffle();
-    i++;
-}
+  @media (max-width: 600px) {
+    .exp { grid-template-columns: 1fr; gap: 0.5rem; }
+  }
 
-print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
-									</section>
+  /* ───────── Education ───────── */
+  .edu-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .edu {
+    padding: 1.3rem 0;
+    border-bottom: 1px solid var(--rule);
+    display: grid;
+    grid-template-columns: 9rem 1fr;
+    gap: 1.6rem;
+  }
+  .edu:last-child { border-bottom: none; }
+  .edu-when {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--accent);
+    padding-top: 5px;
+  }
+  .edu-school {
+    font-family: var(--display);
+    font-size: 1.2rem;
+    margin: 0 0 0.15rem;
+    line-height: 1.25;
+  }
+  .edu-degree {
+    font-style: italic;
+    color: var(--ink-soft);
+    font-size: 0.95rem;
+    margin: 0 0 0.55rem;
+  }
+  .edu-gpa {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    background: var(--paper-edge);
+    padding: 1px 7px;
+    border-radius: 2px;
+    color: var(--ink);
+    margin-left: 0.4rem;
+    font-style: normal;
+  }
+  .courses-bands {
+    display: flex; flex-wrap: wrap; gap: 0.35rem;
+  }
+  .course-tag {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--ink-soft);
+    border: 1px solid var(--rule);
+    padding: 2px 7px;
+    border-radius: 2px;
+    background: rgba(255,255,255,0.4);
+  }
+  .course-tag .grade {
+    color: var(--accent);
+    margin-left: 0.3rem;
+    font-weight: 500;
+  }
 
-									<section>
-										<h4>Lists</h4>
-										<div class="row">
-											<div class="col-6 col-12-xsmall">
-												<h5>Unordered</h5>
-												<ul>
-													<li>Dolor pulvinar etiam magna etiam.</li>
-													<li>Sagittis adipiscing lorem eleifend.</li>
-													<li>Felis enim feugiat dolore viverra.</li>
-												</ul>
-												<h5>Alternate</h5>
-												<ul class="alt">
-													<li>Dolor pulvinar etiam magna etiam.</li>
-													<li>Sagittis adipiscing lorem eleifend.</li>
-													<li>Felis enim feugiat dolore viverra.</li>
-												</ul>
-											</div>
-											<div class="col-6 col-12-xsmall">
-												<h5>Ordered</h5>
-												<ol>
-													<li>Dolor pulvinar etiam magna etiam.</li>
-													<li>Etiam vel felis at lorem sed viverra.</li>
-													<li>Felis enim feugiat dolore viverra.</li>
-													<li>Dolor pulvinar etiam magna etiam.</li>
-													<li>Etiam vel felis at lorem sed viverra.</li>
-													<li>Felis enim feugiat dolore viverra.</li>
-												</ol>
-												<h5>Icons</h5>
-												<ul class="icons">
-													<li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
-													<li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
-													<li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
-													<li><a href="#" class="icon brands fa-github"><span class="label">Github</span></a></li>
-													<li><a href="#" class="icon brands fa-dribbble"><span class="label">Dribbble</span></a></li>
-													<li><a href="#" class="icon brands fa-tumblr"><span class="label">Tumblr</span></a></li>
-												</ul>
-											</div>
-										</div>
-										<h5>Actions</h5>
-										<ul class="actions">
-											<li><a href="#" class="button primary">Default</a></li>
-											<li><a href="#" class="button">Default</a></li>
-											<li><a href="#" class="button alt">Default</a></li>
-										</ul>
-										<ul class="actions small">
-											<li><a href="#" class="button primary small">Small</a></li>
-											<li><a href="#" class="button small">Small</a></li>
-											<li><a href="#" class="button alt small">Small</a></li>
-										</ul>
-										<div class="row">
-											<div class="col-3 col-6-medium col-12-xsmall">
-												<ul class="actions stacked">
-													<li><a href="#" class="button primary">Default</a></li>
-													<li><a href="#" class="button">Default</a></li>
-													<li><a href="#" class="button alt">Default</a></li>
-												</ul>
-											</div>
-											<div class="col-3 col-6 col-12-xsmall">
-												<ul class="actions stacked">
-													<li><a href="#" class="button primary small">Small</a></li>
-													<li><a href="#" class="button small">Small</a></li>
-													<li><a href="#" class="button alt small">Small</a></li>
-												</ul>
-											</div>
-											<div class="col-3 col-6-medium col-12-xsmall">
-												<ul class="actions stacked">
-													<li><a href="#" class="button primary fit">Default</a></li>
-													<li><a href="#" class="button fit">Default</a></li>
-													<li><a href="#" class="button alt fit">Default</a></li>
-												</ul>
-											</div>
-											<div class="col-3 col-6-medium col-12-xsmall">
-												<ul class="actions stacked">
-													<li><a href="#" class="button primary small fit">Small</a></li>
-													<li><a href="#" class="button small fit">Small</a></li>
-													<li><a href="#" class="button alt small fit">Small</a></li>
-												</ul>
-											</div>
-										</div>
-									</section>
+  @media (max-width: 600px) {
+    .edu { grid-template-columns: 1fr; gap: 0.5rem; }
+  }
 
-									<section>
-										<h4>Table</h4>
-										<h5>Default</h5>
-										<div class="table-wrapper">
-											<table>
-												<thead>
-													<tr>
-														<th>Name</th>
-														<th>Description</th>
-														<th>Price</th>
-													</tr>
-												</thead>
-												<tbody>
-													<tr>
-														<td>Item One</td>
-														<td>Ante turpis integer aliquet porttitor.</td>
-														<td>29.99</td>
-													</tr>
-													<tr>
-														<td>Item Two</td>
-														<td>Vis ac commodo adipiscing arcu aliquet.</td>
-														<td>19.99</td>
-													</tr>
-													<tr>
-														<td>Item Three</td>
-														<td> Morbi faucibus arcu accumsan lorem.</td>
-														<td>29.99</td>
-													</tr>
-													<tr>
-														<td>Item Four</td>
-														<td>Vitae integer tempus condimentum.</td>
-														<td>19.99</td>
-													</tr>
-													<tr>
-														<td>Item Five</td>
-														<td>Ante turpis integer aliquet porttitor.</td>
-														<td>29.99</td>
-													</tr>
-												</tbody>
-												<tfoot>
-													<tr>
-														<td colspan="2"></td>
-														<td>100.00</td>
-													</tr>
-												</tfoot>
-											</table>
-										</div>
+  /* ───────── Projects ───────── */
+  .proj-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+  }
+  .proj {
+    border: 1px solid var(--rule);
+    background: rgba(255,255,255,0.35);
+    padding: 1.1rem;
+    border-radius: 2px;
+    transition: transform 200ms ease, box-shadow 200ms ease;
+  }
+  .proj:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 16px 30px -22px rgba(26,23,20,0.35);
+  }
+  .proj-thumb {
+    width: 100%; aspect-ratio: 16 / 10;
+    overflow: hidden;
+    border: 1px solid var(--rule);
+    margin-bottom: 0.9rem;
+    border-radius: 2px;
+  }
+  .proj-thumb img {
+    width: 100%; height: 100%; object-fit: cover;
+  }
+  .proj h4 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: 1.1rem;
+    line-height: 1.25;
+    margin: 0 0 0.5rem;
+  }
+  .proj p {
+    font-size: 0.92rem;
+    color: var(--ink-soft);
+    margin: 0 0 0.7rem;
+  }
+  .proj-links {
+    display: flex; gap: 0.4rem; flex-wrap: wrap;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .proj-links a {
+    background: none;
+    color: var(--accent);
+    border: 1px solid var(--accent-soft);
+    padding: 2px 7px;
+    border-radius: 2px;
+  }
+  .proj-links a:hover {
+    background: var(--accent);
+    color: var(--paper);
+  }
 
-										<h5>Alternate</h5>
-										<div class="table-wrapper">
-											<table class="alt">
-												<thead>
-													<tr>
-														<th>Name</th>
-														<th>Description</th>
-														<th>Price</th>
-													</tr>
-												</thead>
-												<tbody>
-													<tr>
-														<td>Item One</td>
-														<td>Ante turpis integer aliquet porttitor.</td>
-														<td>29.99</td>
-													</tr>
-													<tr>
-														<td>Item Two</td>
-														<td>Vis ac commodo adipiscing arcu aliquet.</td>
-														<td>19.99</td>
-													</tr>
-													<tr>
-														<td>Item Three</td>
-														<td> Morbi faucibus arcu accumsan lorem.</td>
-														<td>29.99</td>
-													</tr>
-													<tr>
-														<td>Item Four</td>
-														<td>Vitae integer tempus condimentum.</td>
-														<td>19.99</td>
-													</tr>
-													<tr>
-														<td>Item Five</td>
-														<td>Ante turpis integer aliquet porttitor.</td>
-														<td>29.99</td>
-													</tr>
-												</tbody>
-												<tfoot>
-													<tr>
-														<td colspan="2"></td>
-														<td>100.00</td>
-													</tr>
-												</tfoot>
-											</table>
-										</div>
-									</section>
+  /* ───────── Contact ───────── */
+  .contact-card {
+    border: 1px solid var(--rule);
+    background:
+      linear-gradient(135deg, rgba(255,255,255,0.5), rgba(255,255,255,0)),
+      var(--paper-edge);
+    padding: 2.2rem 2rem;
+    border-radius: 2px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 1.5rem;
+    align-items: center;
+  }
+  .contact-card p { margin: 0; max-width: 32rem; color: var(--ink-soft); }
+  .contact-card .email {
+    font-family: var(--display);
+    font-size: 1.4rem;
+    color: var(--ink);
+    background: none;
+    border-bottom: 1px solid var(--accent);
+    padding-bottom: 2px;
+  }
+  .contact-card .email:hover { color: var(--accent); }
+  .social {
+    display: flex; gap: 0.7rem;
+    list-style: none; margin: 0.9rem 0 0; padding: 0;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .social a {
+    background: none;
+    color: var(--ink-soft);
+    border: 1px solid var(--rule);
+    padding: 4px 10px;
+    border-radius: 2px;
+  }
+  .social a:hover { color: var(--paper); background: var(--ink); border-color: var(--ink); }
 
-									<section>
-										<h4>Buttons</h4>
-										<ul class="actions">
-											<li><a href="#" class="button primary">Primary</a></li>
-											<li><a href="#" class="button">Default</a></li>
-											<li><a href="#" class="button alt">Alternate</a></li>
-										</ul>
-										<ul class="actions">
-											<li><a href="#" class="button primary large">Large</a></li>
-											<li><a href="#" class="button">Default</a></li>
-											<li><a href="#" class="button alt small">Small</a></li>
-										</ul>
-										<ul class="actions fit">
-											<li><a href="#" class="button primary fit">Fit</a></li>
-											<li><a href="#" class="button fit">Fit</a></li>
-											<li><a href="#" class="button alt fit">Fit</a></li>
-										</ul>
-										<ul class="actions fit small">
-											<li><a href="#" class="button primary fit small">Fit + Small</a></li>
-											<li><a href="#" class="button fit small">Fit + Small</a></li>
-											<li><a href="#" class="button alt fit small">Fit + Small</a></li>
-										</ul>
-										<ul class="actions">
-											<li><a href="#" class="button primary icon solid fa-download">Icon</a></li>
-											<li><a href="#" class="button icon solid fa-download">Icon</a></li>
-											<li><a href="#" class="button alt icon solid fa-check">Icon</a></li>
-										</ul>
-										<ul class="actions">
-											<li><span class="button primary disabled">Primary</span></li>
-											<li><span class="button disabled">Default</span></li>
-											<li><span class="button alt disabled">Alternate</span></li>
-										</ul>
-									</section>
+  @media (max-width: 600px) {
+    .contact-card { grid-template-columns: 1fr; padding: 1.6rem 1.3rem; }
+  }
 
-									<section>
-										<h4>Form</h4>
-										<form method="post" action="#">
-											<div class="row gtr-uniform">
-												<div class="col-6 col-12-xsmall">
-													<input type="text" name="demo-name" id="demo-name" value="" placeholder="Name" />
-												</div>
-												<div class="col-6 col-12-xsmall">
-													<input type="email" name="demo-email" id="demo-email" value="" placeholder="Email" />
-												</div>
-												<div class="col-12">
-													<select name="demo-category" id="demo-category">
-														<option value="">- Category -</option>
-														<option value="1">Manufacturing</option>
-														<option value="1">Shipping</option>
-														<option value="1">Administration</option>
-														<option value="1">Human Resources</option>
-													</select>
-												</div>
-												<div class="col-4 col-12-medium">
-													<input type="radio" id="demo-priority-low" name="demo-priority" checked>
-													<label for="demo-priority-low">Low Priority</label>
-												</div>
-												<div class="col-4 col-12-medium">
-													<input type="radio" id="demo-priority-normal" name="demo-priority">
-													<label for="demo-priority-normal">Normal Priority</label>
-												</div>
-												<div class="col-4 col-12-medium">
-													<input type="radio" id="demo-priority-high" name="demo-priority">
-													<label for="demo-priority-high">High Priority</label>
-												</div>
-												<div class="col-6 col-12-medium">
-													<input type="checkbox" id="demo-copy" name="demo-copy">
-													<label for="demo-copy">Email me a copy of this message</label>
-												</div>
-												<div class="col-6 col-12-medium">
-													<input type="checkbox" id="demo-human" name="demo-human" checked>
-													<label for="demo-human">I am a human and not a robot</label>
-												</div>
-												<div class="col-12">
-													<textarea name="demo-message" id="demo-message" placeholder="Enter your message" rows="6"></textarea>
-												</div>
-												<div class="col-12">
-													<ul class="actions">
-														<li><input type="submit" value="Send Message" /></li>
-														<li><input type="reset" value="Reset" class="alt" /></li>
-													</ul>
-												</div>
-											</div>
-										</form>
-									</section>
+  /* ───────── Footer ───────── */
+  footer.page-footer {
+    max-width: 56rem;
+    margin: 0 auto;
+    padding: 2.2rem 1.5rem 4rem;
+    font-family: var(--mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.06em;
+    color: var(--ink-mute);
+    display: flex; justify-content: space-between; flex-wrap: wrap;
+    gap: 0.6rem;
+    border-top: 1px solid var(--rule);
+  }
+  footer.page-footer a { background: none; color: var(--ink-soft); }
+  footer.page-footer a:hover { color: var(--accent); }
 
-									<section>
-										<h4>Image</h4>
-										<h5>Fit</h5>
-										<span class="image fit"><img src="images/banner.jpg" alt="" /></span>
-										<div class="box alt">
-											<div class="row gtr-50 gtr-uniform">
-												<div class="col-4"><span class="image fit"><img src="images/pic01.jpg" alt="" /></span></div>
-												<div class="col-4"><span class="image fit"><img src="images/pic02.jpg" alt="" /></span></div>
-												<div class="col-4"><span class="image fit"><img src="images/pic03.jpg" alt="" /></span></div>
-												<div class="col-4"><span class="image fit"><img src="images/pic02.jpg" alt="" /></span></div>
-												<div class="col-4"><span class="image fit"><img src="images/pic03.jpg" alt="" /></span></div>
-												<div class="col-4"><span class="image fit"><img src="images/pic01.jpg" alt="" /></span></div>
-												<div class="col-4"><span class="image fit"><img src="images/pic03.jpg" alt="" /></span></div>
-												<div class="col-4"><span class="image fit"><img src="images/pic01.jpg" alt="" /></span></div>
-												<div class="col-4"><span class="image fit"><img src="images/pic02.jpg" alt="" /></span></div>
-											</div>
-										</div>
-										<h5>Left &amp; Right</h5>
-										<p><span class="image left"><img src="images/avatar.jpg" alt="" /></span>Fringilla nisl. Donec accumsan interdum nisi, quis tincidunt felis sagittis eget. tempus euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing accumsan eu faucibus. Integer ac pellentesque praesent tincidunt felis sagittis eget. tempus euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing accumsan eu faucibus. Integer ac pellentesque praesent. Donec accumsan interdum nisi, quis tincidunt felis sagittis eget. tempus euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing accumsan eu faucibus. Integer ac pellentesque praesent tincidunt felis sagittis eget. tempus euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing accumsan eu faucibus. Integer ac pellentesque praesent.</p>
-										<p><span class="image right"><img src="images/avatar.jpg" alt="" /></span>Fringilla nisl. Donec accumsan interdum nisi, quis tincidunt felis sagittis eget. tempus euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing accumsan eu faucibus. Integer ac pellentesque praesent tincidunt felis sagittis eget. tempus euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing accumsan eu faucibus. Integer ac pellentesque praesent. Donec accumsan interdum nisi, quis tincidunt felis sagittis eget. tempus euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing accumsan eu faucibus. Integer ac pellentesque praesent tincidunt felis sagittis eget. tempus euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing accumsan eu faucibus. Integer ac pellentesque praesent.</p>
-									</section>
+  /* ───────── Reveal on load (subtle, restrained) ───────── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(8px);
+    animation: rise 700ms cubic-bezier(.2,.7,.2,1) forwards;
+  }
+  .reveal:nth-child(2) { animation-delay: 80ms; }
+  .reveal:nth-child(3) { animation-delay: 160ms; }
+  .reveal:nth-child(4) { animation-delay: 240ms; }
+  @keyframes rise {
+    to { opacity: 1; transform: translateY(0); }
+  }
 
-								</div>
-							</section>
-						-->
+  /* selection */
+  ::selection { background: var(--highlight); color: var(--ink); }
+</style>
+</head>
 
-					</div>
+<body>
 
-				<!-- Footer -->
-					<section id="footer">
-						<div class="container">
-							<ul class="copyright">
-								<li>&copy; Hangrui Cao. All rights reserved.</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
-							</ul>
-						</div>
-					</section>
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="#top">Hangrui Cao<span class="dot">.</span></a>
+    <nav class="primary">
+      <a href="#about">About</a>
+      <a href="#news">News</a>
+      <a href="#research">Research</a>
+      <a href="#experience">Experience</a>
+      <a href="#education">Education</a>
+      <a href="#projects">Projects</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+</header>
 
-			</div>
+<main id="top">
 
-		<!-- Scripts -->
-			<script src="assets/js/jquery.min.js"></script>
-			<script src="assets/js/jquery.scrollex.min.js"></script>
-			<script src="assets/js/jquery.scrolly.min.js"></script>
-			<script src="assets/js/browser.min.js"></script>
-			<script src="assets/js/breakpoints.min.js"></script>
-			<script src="assets/js/util.js"></script>
-			<script src="assets/js/main.js"></script>
+  <!-- ═════════ HERO ═════════ -->
+  <section id="about" class="hero">
+    <div>
+      <div class="hero-meta reveal">
+        <span class="pill">Pittsburgh, PA</span>
+        <span>Carnegie Mellon · SCS</span>
+      </div>
 
-	</body>
+      <h1 class="hero-name reveal">Hangrui <em>Cao</em></h1>
+      <p class="hero-role reveal">Graduate Student, Computational Data Science</p>
+
+      <p class="hero-bio reveal">
+        I am a graduate student in <b>Computational Data Science</b> at Carnegie Mellon University,
+        School of Computer Science. Previously, I received a B.S.E. in <b>Computer Science</b>
+        (minor in Mathematics) from the University of Michigan and a dual B.S.E. in
+        <b>Electrical and Computer Engineering</b> from Shanghai Jiao Tong University.
+      </p>
+      <p class="hero-bio reveal" style="margin-top: 0.9rem;">
+        My research interests lie at the intersection of <b>machine learning</b>, <b>federated and
+        distributed learning</b>, large-scale <b>data analysis</b>, and the systems that
+        make them work in practice — from databases to full-stack engineering.
+      </p>
+
+      <div class="hero-links reveal">
+        <a class="primary" href="files/Hangrui_Cao_CV_2021_Nov.pdf">↗ Curriculum Vitae</a>
+        <a href="mailto:hangrui@umich.edu">Email</a>
+        <a href="https://github.com/DiegoCao/">GitHub</a>
+        <a href="https://www.linkedin.com/in/hangrui-cao-40a936193/">LinkedIn</a>
+        <a href="https://twitter.com/hangrui_cao">Twitter</a>
+      </div>
+    </div>
+
+    <div>
+      <div class="portrait">
+        <img src="images/chravatar.png" alt="Hangrui Cao portrait" />
+      </div>
+      <div class="portrait-caption">— hangrui cao —</div>
+    </div>
+  </section>
+
+  <hr class="rule" />
+
+  <!-- ═════════ NEWS ═════════ -->
+  <section id="news">
+    <span class="section-label">Recent</span>
+    <h2 class="section-title">News &amp; <em>updates</em></h2>
+
+    <ul class="news-list">
+      <li>
+        <span class="date">2022 · 05</span>
+        <span class="desc">Joined <b>Carnegie Mellon University</b> as a graduate student in Computational Data Science (SCS).</span>
+      </li>
+      <li>
+        <span class="date">2022 · 02</span>
+        <span class="desc">Paper <b>“Birds of a Feather Help: Context-aware Client Selection for Efficient Federated Learning”</b> accepted at <i>FL-AAAI-22</i> for oral presentation.</span>
+      </li>
+      <li>
+        <span class="date">2022 · 05</span>
+        <span class="desc">Graduated from the <b>University of Michigan</b> with a B.S.E. in Computer Science (GPA 3.98/4.00).</span>
+      </li>
+      <li>
+        <span class="date">2020 · 11</span>
+        <span class="desc">Co-authored paper on <b>Networked Control Systems under Denial-of-Service attack</b> presented at <i>CAC 2020</i>.</span>
+      </li>
+    </ul>
+  </section>
+
+  <hr class="rule" />
+
+  <!-- ═════════ RESEARCH / PUBLICATIONS ═════════ -->
+  <section id="research">
+    <span class="section-label">Publications</span>
+    <h2 class="section-title">Selected <em>research</em></h2>
+
+    <article class="pub">
+      <a href="images/pic.png" class="pub-thumb bare">
+        <img src="images/pic.png" alt="" />
+      </a>
+      <div class="pub-body">
+        <h3>Birds of a Feather Help: Context-aware Client Selection for Efficient Federated Learning</h3>
+        <p class="pub-authors"><span class="me">Hangrui Cao</span>, Yifei Zhu, <em>et al.</em></p>
+        <p class="pub-venue">
+          International Workshop on Federated Learning, AAAI 2022
+          <span class="badge">Oral</span>
+        </p>
+        <p class="pub-notes">
+          A novel <i>neural combinatorial contextual bandit</i> (NCCB) intelligently selects
+          clients in each federated round while preserving privacy. The method surpasses
+          the state-of-the-art Oort in both convergence speed and final accuracy.
+        </p>
+        <div class="pub-links">
+          <a href="files/Dependence_aware_client_selection_for_FL_.pdf">Paper</a>
+          <a href="https://federated-learning.org/fl-aaai-2022/">Venue</a>
+        </div>
+      </div>
+    </article>
+
+    <article class="pub">
+      <a href="images/emoji_sample.png" class="pub-thumb bare">
+        <img src="images/emoji_sample.png" alt="" />
+      </a>
+      <div class="pub-body">
+        <h3>Large-scale Data Analysis and Group Work Pattern Recognition with the GitHub Archive Dataset</h3>
+        <p class="pub-authors"><span class="me">Hangrui Cao</span>, advised by Qiaozhu Mei</p>
+        <p class="pub-venue">Working paper · University of Michigan</p>
+        <p class="pub-notes">
+          A large-scale empirical study of how sentimental emoji and text usage relate to
+          GitHub contributors' behavior. Methods include GNN-based social graph embedding,
+          LINE, regression, clustering, and NLP processing.
+        </p>
+        <div class="pub-links">
+          <a href="http://www-personal.umich.edu/~qmei/">Advisor</a>
+        </div>
+      </div>
+    </article>
+
+    <article class="pub">
+      <a href="images/cac.jpg" class="pub-thumb bare">
+        <img src="images/cac.jpg" alt="" />
+      </a>
+      <div class="pub-body">
+        <h3>Networked Control System under Denial-of-Service Attack: A Simulation Study</h3>
+        <p class="pub-authors"><span class="me">Hangrui Cao</span>, Jing Wu, <em>et al.</em></p>
+        <p class="pub-venue">Chinese Automation Congress (CAC) 2020</p>
+        <p class="pub-notes">
+          Implementation and simulation of a networked control system under DoS attacks
+          using TrueTime, evaluating resilience under adversarial network conditions.
+        </p>
+        <div class="pub-links">
+          <a href="files/2020CACpaper.pdf">Paper</a>
+        </div>
+      </div>
+    </article>
+
+    <article class="pub">
+      <a href="images/MDP_cover.png" class="pub-thumb bare">
+        <img src="images/MDP_cover.png" alt="" />
+      </a>
+      <div class="pub-body">
+        <h3>Resolving the “Shaky Ground Truth” Problem in Driver Behavior Classification</h3>
+        <p class="pub-authors"><span class="me">Hangrui Cao</span>, advised by Carol Flannagan</p>
+        <p class="pub-venue">University of Michigan Transportation Research Institute</p>
+        <p class="pub-notes">
+          Lightweight multi-class CNN for driver behavior classification (90.2% accuracy);
+          designed loss functions, confident learning, and Bayesian CNNs to model
+          aleatoric uncertainty (0.0162) when labels themselves are uncertain.
+        </p>
+        <div class="pub-links">
+          <a href="files/Shaky_ground_truth_presentation.pdf">Slides</a>
+          <a href="https://umtri.umich.edu/people/flannagan-carol/">Advisor</a>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <hr class="rule" />
+
+  <!-- ═════════ EXPERIENCE ═════════ -->
+  <section id="experience">
+    <span class="section-label">Industry</span>
+    <h2 class="section-title">Work <em>experience</em></h2>
+
+    <div class="exp">
+      <div class="exp-when">2021 · Intel</div>
+      <div>
+        <h4 class="exp-role">Deep Learning Software Intern</h4>
+        <p class="exp-org">Intel Corporation · Analytics Zoo team</p>
+        <ul>
+          <li>Implemented XGBoost and ResNet in Scala/Java, improving training throughput by <b>9.8%</b>.</li>
+          <li>Built a model-inference pipeline in Python + OpenVINO; designed a YOLOv3 model for cigarette detection.</li>
+          <li>Re-engineered the PPML module, Dockerfile, and unit tests to support Graphene 1.2RC and Intel-SGX.</li>
+          <li>Deployed the FATE federated learning framework in Intel-SGX; tested cluster-serving inference with Flink &amp; Spark.</li>
+        </ul>
+        <div class="pub-links" style="margin-top: 0.6rem;">
+          <a href="https://github.com/DiegoCao/analytics-zoo">Public Code</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="exp">
+      <div class="exp-when">2021 · UMTRI</div>
+      <div>
+        <h4 class="exp-role">Machine Learning Intern &amp; Research Assistant</h4>
+        <p class="exp-org">University of Michigan Transportation Research Institute</p>
+        <ul>
+          <li>Multi-class CNN for driver-behavior classification with OpenCV — 90.2% accuracy.</li>
+          <li>Designed loss functions, confident learning, and probabilistic models for the “Shaky Ground Truth” uncertainty problem.</li>
+          <li>Implemented Bayesian CNNs to capture weight distributions; obtained aleatoric uncertainty 0.0162.</li>
+          <li>Built an eye-gaze data collection system with PyGaze for labelers and drivers.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <hr class="rule" />
+
+  <!-- ═════════ EDUCATION ═════════ -->
+  <section id="education">
+    <span class="section-label">Academic</span>
+    <h2 class="section-title">Education &amp; <em>training</em></h2>
+
+    <div class="edu-grid">
+
+      <div class="edu">
+        <div class="edu-when">2022 — 2023</div>
+        <div>
+          <h4 class="edu-school">Carnegie Mellon University</h4>
+          <p class="edu-degree">
+            M.S. Computational Data Science · School of Computer Science
+            <span class="edu-gpa">GPA 4.0 / 4.0</span>
+          </p>
+          <div class="courses-bands">
+            <span class="course-tag">Intro to Computing Systems<span class="grade">A</span></span>
+            <span class="course-tag">Search Engines</span>
+            <span class="course-tag">Machine Learning</span>
+            <span class="course-tag">Foundations of CDS</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="edu">
+        <div class="edu-when">2020 — 2022</div>
+        <div>
+          <h4 class="edu-school">University of Michigan, Ann Arbor</h4>
+          <p class="edu-degree">
+            B.S.E. Computer Science · Minor in Mathematics
+            <span class="edu-gpa">GPA 3.98 / 4.00</span>
+          </p>
+          <div class="courses-bands">
+            <span class="course-tag">Computer Vision<span class="grade">A</span></span>
+            <span class="course-tag">Machine Learning<span class="grade">A</span></span>
+            <span class="course-tag">Conversational AI<span class="grade">A</span></span>
+            <span class="course-tag">HCI<span class="grade">A+</span></span>
+            <span class="course-tag">NLP<span class="grade">A</span></span>
+            <span class="course-tag">Databases<span class="grade">A+</span></span>
+            <span class="course-tag">Algorithms<span class="grade">A</span></span>
+            <span class="course-tag">Computer Networks<span class="grade">A+</span></span>
+            <span class="course-tag">Numerical Analysis<span class="grade">A</span></span>
+            <span class="course-tag">Matrix Theory<span class="grade">A</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="edu">
+        <div class="edu-when">2018 — 2022</div>
+        <div>
+          <h4 class="edu-school">Shanghai Jiao Tong University</h4>
+          <p class="edu-degree">
+            B.S.E. Electrical &amp; Computer Engineering
+            <span class="edu-gpa">GPA 3.874 / 4.00</span>
+          </p>
+          <div class="courses-bands">
+            <span class="course-tag">Programming &amp; DS<span class="grade">A+</span></span>
+            <span class="course-tag">Logic Design<span class="grade">A</span></span>
+            <span class="course-tag">Electronic Circuits<span class="grade">A</span></span>
+            <span class="course-tag">Intro to Engineering<span class="grade">A+</span></span>
+            <span class="course-tag">Probabilistic Methods<span class="grade">A</span></span>
+            <span class="course-tag">Discrete Math<span class="grade">A</span></span>
+            <span class="course-tag">Honors Math II–IV<span class="grade">A+</span></span>
+            <span class="course-tag">Honors Physics I–II<span class="grade">A+</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="edu">
+        <div class="edu-when">2020 · Winter</div>
+        <div>
+          <h4 class="edu-school">Ritsumeikan University</h4>
+          <p class="edu-degree">Winter Program · Kyoto, Japan</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <hr class="rule" />
+
+  <!-- ═════════ PROJECTS ═════════ -->
+  <section id="projects">
+    <span class="section-label">Course &amp; Side</span>
+    <h2 class="section-title">Selected <em>projects</em></h2>
+
+    <div class="proj-grid">
+
+      <article class="proj">
+        <div class="proj-thumb"><img src="images/442photo.png" alt="" /></div>
+        <h4>Automatic Image Colorization with CNN &amp; GAN</h4>
+        <p>Generative adversarial colorization compared against classification approaches, evaluated by PSNR and SSIM.</p>
+        <div class="proj-links">
+          <a href="https://web.eecs.umich.edu/~justincj/teaching/eecs442/projects/WI2021/pdfs/068.pdf">Paper</a>
+          <a href="https://github.com/DiegoCao/eecs442_proj.git">Code</a>
+        </div>
+      </article>
+
+      <article class="proj">
+        <div class="proj-thumb"><img src="images/dashboard.png" alt="" /></div>
+        <h4>Real-time Carbon Emission Evaluation for Low-Carbon Buildings</h4>
+        <p>Reinforcement-learning controller for emissions; real-time tracking dashboard backed by a streaming database.</p>
+        <div class="proj-links">
+          <a href="https://diegocao-streamweb-app-ucjt6n.streamlitapp.com/">Live Demo</a>
+        </div>
+      </article>
+
+      <article class="proj">
+        <div class="proj-thumb"><img src="images/emai_voice.png" alt="" /></div>
+        <h4>Email Voice Assistant</h4>
+        <p>React + Flask interface for voice-driven email; 7.8% WER speech-to-text and smart-reply with Dialogflow / Rasa.</p>
+        <div class="proj-links">
+          <a href="https://github.com/DiegoCao/email-voice-assistant">Code</a>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <hr class="rule" />
+
+  <!-- ═════════ CONTACT ═════════ -->
+  <section id="contact">
+    <span class="section-label">Reach out</span>
+    <h2 class="section-title">Get in <em>touch</em></h2>
+
+    <div class="contact-card">
+      <div>
+        <p style="margin-bottom: 0.6rem;">
+          I'm always happy to discuss research, collaborations, or interesting ideas.
+          The fastest way to reach me is by email:
+        </p>
+        <a class="email" href="mailto:hangrui@umich.edu">hangrui@umich.edu</a>
+        <ul class="social">
+          <li><a href="https://github.com/DiegoCao/">GitHub</a></li>
+          <li><a href="https://www.linkedin.com/in/hangrui-cao-40a936193/">LinkedIn</a></li>
+          <li><a href="https://twitter.com/hangrui_cao">Twitter</a></li>
+          <li><a href="https://www.instagram.com/hangruic/">Instagram</a></li>
+        </ul>
+      </div>
+      <div style="font-family: var(--display); font-size: 4rem; line-height: 1; color: var(--accent-soft); opacity: 0.7;">✉</div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="page-footer">
+  <span>© 2026 Hangrui Cao · All rights reserved</span>
+  <span>Set in Instrument Serif, Newsreader &amp; JetBrains Mono</span>
+</footer>
+
+<script>
+  // Scrollspy: highlight nav based on section in view
+  const sections = document.querySelectorAll('main section[id]');
+  const navLinks = document.querySelectorAll('nav.primary a');
+  const byId = (id) => document.querySelector(`nav.primary a[href="#${id}"]`);
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        navLinks.forEach(a => a.style.color = '');
+        const active = byId(e.target.id);
+        if (active) { active.style.color = 'var(--accent)'; }
+      }
+    });
+  }, { rootMargin: '-40% 0px -55% 0px', threshold: 0 });
+
+  sections.forEach(s => io.observe(s));
+</script>
+
+</body>
 </html>
