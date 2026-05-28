@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Writing — Hangrui Cao</title>
+<meta name="description" content="Essays and notes by Hangrui Cao on ML systems, LLM inference, and distributed computing." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --paper: #f7f3ec;
+    --paper-edge: #efe9dd;
+    --ink: #1a1714;
+    --ink-soft: #4a443d;
+    --ink-mute: #857d70;
+    --rule: #d8d0bf;
+    --accent: #8a3324;
+    --accent-soft: #b9692a;
+    --highlight: #fff3c2;
+    --serif: "Newsreader", Georgia, "Times New Roman", serif;
+    --display: "Instrument Serif", "Newsreader", Georgia, serif;
+    --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+    --measure: 42rem;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background:
+      radial-gradient(1200px 600px at 80% -10%, rgba(185, 105, 42, 0.06), transparent 60%),
+      radial-gradient(900px 500px at -10% 110%, rgba(138, 51, 36, 0.05), transparent 60%),
+      var(--paper);
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: 17px;
+    line-height: 1.62;
+    font-feature-settings: "kern", "liga", "calt", "onum";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body::before {
+    content: "";
+    position: fixed; inset: 0;
+    pointer-events: none;
+    background-image:
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.1  0 0 0 0 0.09  0 0 0 0 0.07  0 0 0 0.045 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    opacity: 0.55;
+    mix-blend-mode: multiply;
+    z-index: 999;
+  }
+
+  a {
+    color: var(--ink);
+    text-decoration: none;
+    background-image: linear-gradient(var(--accent), var(--accent));
+    background-repeat: no-repeat;
+    background-size: 100% 1px;
+    background-position: 0 100%;
+    transition: color 160ms ease, background-size 200ms ease;
+  }
+  a:hover { color: var(--accent); background-size: 100% 2px; }
+  a.bare { background: none; }
+
+  /* ── Top bar ── */
+  .topbar {
+    position: sticky; top: 0; z-index: 50;
+    backdrop-filter: blur(8px) saturate(1.1);
+    -webkit-backdrop-filter: blur(8px) saturate(1.1);
+    background: rgba(247, 243, 236, 0.78);
+    border-bottom: 1px solid var(--rule);
+  }
+  .topbar-inner {
+    max-width: 52rem;
+    margin: 0 auto;
+    padding: 0.85rem 1.5rem;
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: 1.5rem;
+  }
+  .brand {
+    font-family: var(--display);
+    font-size: 1.25rem;
+    letter-spacing: 0.01em;
+    background: none;
+  }
+  .brand .dot { color: var(--accent); }
+  .back-nav {
+    display: flex; gap: 1.4rem;
+    font-family: var(--mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .back-nav a {
+    background: none;
+    color: var(--ink-soft);
+    border-bottom: 1px dashed transparent;
+    padding-bottom: 2px;
+  }
+  .back-nav a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+  @media (max-width: 720px) {
+    .topbar-inner { flex-direction: column; align-items: flex-start; gap: 0.6rem; }
+    .back-nav { flex-wrap: wrap; gap: 0.85rem 1.1rem; font-size: 0.68rem; }
+  }
+
+  main {
+    max-width: 52rem;
+    margin: 0 auto;
+    padding: 4rem 1.5rem 5rem;
+  }
+
+  .page-eyebrow {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1rem;
+    display: inline-flex; align-items: center; gap: 0.7rem;
+  }
+  .page-eyebrow::before {
+    content: "§"; font-family: var(--display); font-style: italic;
+    font-size: 1.1rem; color: var(--accent-soft); letter-spacing: 0;
+  }
+
+  h1.page-title {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(2.6rem, 6vw, 4rem);
+    line-height: 1.02;
+    letter-spacing: -0.015em;
+    margin: 0 0 0.6rem;
+  }
+  h1.page-title em {
+    font-style: italic;
+    color: var(--accent);
+    text-decoration: underline;
+    text-decoration-color: var(--accent-soft);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 6px;
+  }
+  .page-intro {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 1.12rem;
+    color: var(--ink-soft);
+    max-width: var(--measure);
+    margin: 0 0 3.2rem;
+  }
+
+  .post {
+    display: grid;
+    grid-template-columns: 4.5rem 1fr;
+    gap: 1.6rem;
+    padding: 2rem 0;
+    border-bottom: 1px dotted var(--rule);
+    align-items: start;
+  }
+  .post:last-of-type { border-bottom: none; }
+
+  .post-num {
+    font-family: var(--display);
+    font-style: italic;
+    font-size: 2.8rem;
+    line-height: 1;
+    color: var(--accent-soft);
+    padding-top: 0.1rem;
+    user-select: none;
+  }
+
+  .post-meta {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 0.55rem;
+    color: var(--ink-mute);
+  }
+  .post-meta .post-date { color: var(--accent); }
+  .post-meta .post-tag {
+    border: 1px solid var(--rule);
+    padding: 1px 7px;
+    border-radius: 999px;
+    color: var(--ink-soft);
+  }
+  .post-meta .post-status {
+    color: var(--accent-soft);
+    font-style: italic;
+    text-transform: none;
+    letter-spacing: 0.04em;
+  }
+
+  .post-title {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: 1.7rem;
+    line-height: 1.18;
+    margin: 0 0 0.5rem;
+    letter-spacing: -0.005em;
+  }
+  .post-title a { background: none; color: var(--ink); }
+  .post-title a:hover { color: var(--accent); }
+
+  .post-teaser {
+    color: var(--ink-soft);
+    font-size: 1rem;
+    margin: 0 0 0.8rem;
+    max-width: var(--measure);
+  }
+
+  .post-read {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: none;
+    border-bottom: 1px solid var(--accent-soft);
+    padding-bottom: 2px;
+  }
+  .post-read:hover { color: var(--ink); border-bottom-color: var(--ink); }
+  .post-read.disabled {
+    color: var(--ink-mute);
+    border-bottom-color: var(--rule);
+    pointer-events: none;
+    cursor: default;
+  }
+
+  footer.page-footer {
+    max-width: 52rem;
+    margin: 4rem auto 0;
+    padding: 2rem 1.5rem 4rem;
+    font-family: var(--mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.06em;
+    color: var(--ink-mute);
+    display: flex; justify-content: space-between; flex-wrap: wrap;
+    gap: 0.6rem;
+    border-top: 1px solid var(--rule);
+  }
+  footer.page-footer a { background: none; color: var(--ink-soft); }
+  footer.page-footer a:hover { color: var(--accent); }
+
+  @media (max-width: 600px) {
+    .post { grid-template-columns: 1fr; gap: 0.4rem; }
+    .post-num { font-size: 1.8rem; }
+  }
+
+  ::selection { background: var(--highlight); color: var(--ink); }
+</style>
+</head>
+
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="../index.html">Hangrui Cao<span class="dot">.</span></a>
+    <nav class="back-nav">
+      <a href="../index.html#about">About</a>
+      <a href="../index.html#research">Research</a>
+      <a href="../index.html#projects">Projects</a>
+      <a href="../index.html#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <span class="page-eyebrow">Notes</span>
+  <h1 class="page-title">Recent <em>writing</em></h1>
+  <p class="page-intro">
+    Drafts and notes on ML systems, LLM inference, and the work I find worth
+    writing about. Updated occasionally — not on a schedule.
+  </p>
+
+  <article class="post">
+    <div class="post-num">01</div>
+    <div>
+      <div class="post-meta">
+        <span class="post-date">2026 · 05 · 28</span>
+        <span class="post-tag">LLM Inference</span>
+        <span class="post-tag">Distributed</span>
+      </div>
+      <h3 class="post-title"><a href="nccl-vs-nvshmem.html">NCCL vs NVSHMEM: Two Answers to the Same Question</a></h3>
+      <p class="post-teaser">
+        NCCL gives you collectives. NVSHMEM gives you memory. A look at when each
+        one wins, why kernel-launch overhead matters now, why MoE inference has
+        quietly pushed NVSHMEM out of the HPC corner, and how DeepEP puts the
+        whole picture together in production.
+      </p>
+      <a class="post-read" href="nccl-vs-nvshmem.html">Read essay →</a>
+    </div>
+  </article>
+
+  <article class="post">
+    <div class="post-num">02</div>
+    <div>
+      <div class="post-meta">
+        <span class="post-date">Draft · 2026</span>
+        <span class="post-tag">ML Systems</span>
+        <span class="post-status">— in progress</span>
+      </div>
+      <h3 class="post-title"><a href="#">Auto-tuning vLLM in Production: A Field Report</a></h3>
+      <p class="post-teaser">
+        What it takes to dynamically choose vLLM deployment configurations from
+        real-time workload signals — and why the obvious heuristics don't survive
+        first contact with production traffic.
+      </p>
+      <a class="post-read disabled" href="#">Coming soon →</a>
+    </div>
+  </article>
+
+  <article class="post">
+    <div class="post-num">03</div>
+    <div>
+      <div class="post-meta">
+        <span class="post-date">Draft · 2026</span>
+        <span class="post-tag">Compilers</span>
+        <span class="post-status">— in progress</span>
+      </div>
+      <h3 class="post-title"><a href="#">Notes from a Non-CUDA Accelerator</a></h3>
+      <p class="post-teaser">
+        Lessons from writing custom operators outside the CUDA ecosystem on AWS
+        Trainium — on living without cuBLAS, on what TVM gets you, and on where
+        hand-written kernels still win.
+      </p>
+      <a class="post-read disabled" href="#">Coming soon →</a>
+    </div>
+  </article>
+
+</main>
+
+<footer class="page-footer">
+  <span>© 2026 Hangrui Cao</span>
+  <span><a href="../index.html">← Back to home</a></span>
+</footer>
+
+</body>
+</html>
