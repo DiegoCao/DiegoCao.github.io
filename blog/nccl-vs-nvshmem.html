@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>NCCL vs NVSHMEM — Hangrui Cao</title>
+<meta name="description" content="NCCL and NVSHMEM solve the same problem at different abstraction levels: collectives vs. memory. A look at when each one wins, and why MoE inference has pushed NVSHMEM out of the corner." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --paper: #f7f3ec;
+    --paper-edge: #efe9dd;
+    --ink: #1a1714;
+    --ink-soft: #4a443d;
+    --ink-mute: #857d70;
+    --rule: #d8d0bf;
+    --accent: #8a3324;
+    --accent-soft: #b9692a;
+    --highlight: #fff3c2;
+    --code-bg: #f1ecdf;
+    --code-ink: #2a2521;
+    --serif: "Newsreader", Georgia, "Times New Roman", serif;
+    --display: "Instrument Serif", "Newsreader", Georgia, serif;
+    --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+    --measure: 38rem;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background:
+      radial-gradient(1200px 600px at 80% -10%, rgba(185, 105, 42, 0.05), transparent 60%),
+      var(--paper);
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: 18px;
+    line-height: 1.7;
+    font-feature-settings: "kern", "liga", "calt", "onum";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body::before {
+    content: "";
+    position: fixed; inset: 0;
+    pointer-events: none;
+    background-image:
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.1  0 0 0 0 0.09  0 0 0 0 0.07  0 0 0 0.04 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    opacity: 0.5;
+    mix-blend-mode: multiply;
+    z-index: 999;
+  }
+
+  a {
+    color: var(--ink);
+    text-decoration: none;
+    background-image: linear-gradient(var(--accent), var(--accent));
+    background-repeat: no-repeat;
+    background-size: 100% 1px;
+    background-position: 0 100%;
+    transition: color 160ms ease, background-size 200ms ease;
+  }
+  a:hover { color: var(--accent); background-size: 100% 2px; }
+  a.bare { background: none; }
+
+  /* ── Top bar ── */
+  .topbar {
+    position: sticky; top: 0; z-index: 50;
+    backdrop-filter: blur(8px) saturate(1.1);
+    -webkit-backdrop-filter: blur(8px) saturate(1.1);
+    background: rgba(247, 243, 236, 0.78);
+    border-bottom: 1px solid var(--rule);
+  }
+  .topbar-inner {
+    max-width: 48rem;
+    margin: 0 auto;
+    padding: 0.85rem 1.5rem;
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: 1.5rem;
+  }
+  .brand {
+    font-family: var(--display);
+    font-size: 1.2rem;
+    letter-spacing: 0.01em;
+    background: none;
+  }
+  .brand .dot { color: var(--accent); }
+  .back-link {
+    background: none;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .back-link:hover { color: var(--accent); }
+
+  /* ── Article ── */
+  article {
+    max-width: 44rem;
+    margin: 0 auto;
+    padding: 4rem 1.5rem 6rem;
+  }
+
+  .post-header { margin-bottom: 3rem; }
+
+  .post-eyebrow {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1rem;
+    display: flex; flex-wrap: wrap; gap: 0.6rem;
+  }
+  .post-eyebrow .dot::before { content: "·"; margin: 0 0.2rem; color: var(--ink-mute); }
+  .post-eyebrow .tag {
+    border: 1px solid var(--rule);
+    color: var(--ink-soft);
+    padding: 1px 8px;
+    border-radius: 999px;
+    letter-spacing: 0.16em;
+  }
+
+  h1 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    line-height: 1.05;
+    letter-spacing: -0.012em;
+    margin: 0 0 1rem;
+  }
+  h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .lede {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 1.18rem;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    max-width: var(--measure);
+    margin: 0;
+  }
+
+  /* ── Body type ── */
+  article > p, article > ul, article > ol {
+    max-width: var(--measure);
+  }
+  article p { margin: 0 0 1.2rem; }
+  article p b { font-weight: 600; color: var(--ink); }
+  article p i, article p em { font-style: italic; }
+
+  article h2 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(1.45rem, 3vw, 1.95rem);
+    line-height: 1.2;
+    letter-spacing: -0.005em;
+    margin: 3rem 0 1.1rem;
+    color: var(--ink);
+  }
+  article h2 .num {
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    color: var(--accent);
+    letter-spacing: 0.16em;
+    margin-right: 0.6rem;
+    vertical-align: 5px;
+    font-style: normal;
+  }
+  article h2 em { font-style: italic; color: var(--accent); }
+
+  article h3 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-style: italic;
+    font-size: 1.3rem;
+    margin: 2rem 0 0.7rem;
+    color: var(--ink);
+  }
+
+  article ul { padding-left: 1.3rem; margin: 0 0 1.4rem; }
+  article ul li { padding: 0.18rem 0; color: var(--ink-soft); }
+  article ul li::marker { color: var(--accent-soft); }
+
+  /* ── Code ── */
+  code {
+    font-family: var(--mono);
+    font-size: 0.86em;
+    background: var(--code-bg);
+    color: var(--code-ink);
+    padding: 1px 5px;
+    border-radius: 2px;
+  }
+  pre {
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    line-height: 1.55;
+    background: var(--code-bg);
+    color: var(--code-ink);
+    padding: 1.1rem 1.3rem;
+    border-radius: 3px;
+    border-left: 3px solid var(--accent-soft);
+    overflow-x: auto;
+    margin: 0 0 1.5rem;
+    max-width: var(--measure);
+  }
+  pre code {
+    background: none;
+    padding: 0;
+    font-size: inherit;
+    color: inherit;
+  }
+  /* token coloring */
+  .kw { color: #8a3324; font-weight: 500; }
+  .ty { color: #5a4a18; }
+  .fn { color: #2c4a3e; }
+  .cm { color: #857d70; font-style: italic; }
+  .st { color: #6f4218; }
+
+  /* ── Pull quote / aside ── */
+  .pull {
+    font-family: var(--display);
+    font-style: italic;
+    font-size: 1.5rem;
+    line-height: 1.35;
+    color: var(--ink);
+    border-left: 2px solid var(--accent);
+    padding: 0.5rem 0 0.5rem 1.5rem;
+    margin: 2rem 0;
+    max-width: var(--measure);
+  }
+
+  /* ── Comparison table ── */
+  .compare-wrap { max-width: var(--measure); margin: 0 0 1.8rem; overflow-x: auto; }
+  table.compare {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.94rem;
+    background: rgba(255,255,255,0.4);
+  }
+  table.compare th, table.compare td {
+    border-bottom: 1px solid var(--rule);
+    padding: 0.65rem 0.85rem;
+    text-align: left;
+    vertical-align: top;
+  }
+  table.compare thead th {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--paper-edge);
+    border-bottom: 1px solid var(--accent-soft);
+    font-weight: 500;
+  }
+  table.compare tbody tr:last-child td { border-bottom: none; }
+  table.compare td.label {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    width: 32%;
+  }
+  table.compare td { color: var(--ink-soft); }
+
+  /* ── Section divider ── */
+  .rule {
+    border: 0; height: 1px;
+    background: linear-gradient(to right, transparent, var(--rule) 20%, var(--rule) 80%, transparent);
+    margin: 3.5rem 0;
+    max-width: var(--measure);
+  }
+
+  /* ── References / footer ── */
+  .refs {
+    margin-top: 3rem;
+    padding-top: 1.2rem;
+    border-top: 1px solid var(--rule);
+    max-width: var(--measure);
+  }
+  .refs h3 {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 0.6rem;
+    font-style: normal;
+  }
+  .refs ol { font-size: 0.92rem; color: var(--ink-soft); padding-left: 1.3rem; }
+  .refs ol li { padding: 0.25rem 0; }
+
+  .post-foot {
+    margin-top: 4rem;
+    font-family: var(--mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.06em;
+    color: var(--ink-mute);
+    text-align: center;
+  }
+  .post-foot a { background: none; color: var(--ink-soft); }
+
+  ::selection { background: var(--highlight); color: var(--ink); }
+</style>
+</head>
+
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="../index.html">Hangrui Cao<span class="dot">.</span></a>
+    <a class="back-link" href="../index.html#blog">← Back to writing</a>
+  </div>
+</header>
+
+<article>
+
+  <header class="post-header">
+    <div class="post-eyebrow">
+      <span>2026 · 05 · 28</span>
+      <span class="dot"></span>
+      <span class="tag">LLM Inference</span>
+      <span class="tag">Distributed Systems</span>
+      <span class="dot"></span>
+      <span>~ 12 min read</span>
+    </div>
+
+    <h1>NCCL vs NVSHMEM: <em>two answers</em> to the same question</h1>
+
+    <p class="lede">
+      If you've wired up a multi-GPU training run, you've used NCCL. If you've
+      read any recent MoE-inference paper worth its citation count, you've
+      seen NVSHMEM. They sit next to each other on every NVIDIA system and
+      answer the same question — <i>how do these GPUs talk to each other?</i>
+      — at different abstraction levels. This is a short attempt to untangle
+      the two and to argue why the second one matters more than it used to.
+    </p>
+  </header>
+
+  <p>
+    Most people who work on distributed deep learning learn one of these libraries first
+    and never quite see the other. NCCL <a href="https://developer.nvidia.com/nccl">[1]</a>
+    is the default in PyTorch DDP, Megatron, DeepSpeed, JAX — anywhere you've ever called
+    <code>torch.distributed.all_reduce</code>. NVSHMEM <a href="https://docs.nvidia.com/nvshmem/api/index.html">[2]</a>
+    is the library people reach for when NCCL stops being a good fit, which historically
+    has meant "almost never" but in 2026 increasingly means "sparse all-to-all in
+    Mixture-of-Experts inference."
+  </p>
+
+  <p>
+    The simplest way to keep them straight is this:
+  </p>
+
+  <p class="pull">
+    NCCL gives you collectives. NVSHMEM gives you memory.
+  </p>
+
+  <p>
+    Everything else — algorithms, performance characteristics, the integration story —
+    follows from that distinction.
+  </p>
+
+  <hr class="rule" />
+
+  <h2><span class="num">01</span> NCCL: <em>collectives</em> as a primitive</h2>
+
+  <p>
+    NCCL's mental model is <b>bulk synchronous parallel</b>. You assemble a buffer on
+    every participating GPU, you call a collective, and after a synchronization point
+    every GPU has the result the collective promised — sum, gather, broadcast, etc.
+    The primitives are the things you'd find in MPI:
+  </p>
+
+  <ul>
+    <li><code>ncclAllReduce</code> — every rank ends up with the elementwise sum (or max, etc.) of all ranks' buffers. The bread and butter of data-parallel gradient sync.</li>
+    <li><code>ncclAllGather</code> / <code>ncclReduceScatter</code> — the matched pair that powers ZeRO and tensor parallel.</li>
+    <li><code>ncclBroadcast</code>, <code>ncclSend</code> / <code>ncclRecv</code> — point-to-point primitives, used less often but available.</li>
+  </ul>
+
+  <p>
+    From the calling code, every NCCL operation is one line:
+  </p>
+
+  <pre><span class="cm">// gradient AllReduce — what DDP issues under the hood</span>
+<span class="fn">ncclAllReduce</span>(grad_send, grad_recv, n,
+              ncclFloat, ncclSum,
+              comm, stream);
+<span class="fn">cudaStreamSynchronize</span>(stream);  <span class="cm">// barrier</span></pre>
+
+  <p>
+    Underneath, NCCL launches a CUDA kernel that runs ring or tree-based algorithms
+    chosen by message size and topology. On a modern node it negotiates NVLink for
+    intra-node bandwidth and InfiniBand or NVL Switch fabrics for cross-node hops. The
+    library is twelve years old and excruciatingly well-tuned: if your communication
+    pattern is regular and your messages are large enough to amortize the
+    <b>~5–10 µs kernel-launch overhead</b>, NCCL is almost certainly within a few
+    percent of what's achievable.
+  </p>
+
+  <p>
+    That ergonomic floor is exactly the problem when your communication pattern
+    <i>isn't</i> regular.
+  </p>
+
+  <hr class="rule" />
+
+  <h2><span class="num">02</span> NVSHMEM: <em>memory</em> as a primitive</h2>
+
+  <p>
+    NVSHMEM gives every participating GPU — a <b>PE</b> ("processing element," the SHMEM
+    term) — a view of a global symmetric heap. You allocate from this heap with
+    <code>nvshmem_malloc</code> and the resulting pointer is valid on every PE at the
+    same offset. From any PE, you can directly <i>put</i> data into a remote PE's heap,
+    or <i>get</i> from it, with one-sided RDMA-style operations:
+  </p>
+
+  <pre><span class="cm">// device-side — yes, called from inside a CUDA kernel</span>
+<span class="kw">__global__</span> <span class="kw">void</span> <span class="fn">my_kernel</span>(<span class="kw">float</span> *symmetric_buf, <span class="kw">int</span> peer) {
+    <span class="cm">// ... do some compute ...</span>
+
+    <span class="fn">nvshmem_float_put_nbi</span>(symmetric_buf + offset,
+                          src_data, n,
+                          peer);
+
+    <span class="cm">// ... more compute, overlapped with the put ...</span>
+
+    <span class="fn">nvshmem_quiet</span>();  <span class="cm">// wait for completion</span>
+}</pre>
+
+  <p>
+    Three things in that snippet are the whole story:
+  </p>
+
+  <ul>
+    <li><b>It runs in a CUDA kernel.</b> Communication issued from device code, alongside compute, on the same SMs. No host involvement, no separate stream, no kernel launch per message.</li>
+    <li><b>It's one-sided.</b> The remote PE doesn't have to call a matching <code>recv</code>. There's no rendezvous, no two-sided handshake — just a write into a memory region the remote PE has agreed to expose.</li>
+    <li><b>It's non-blocking (<code>_nbi</code>).</b> The put is fire-and-forget; you fence later with <code>nvshmem_quiet</code> or signal-based completion.</li>
+  </ul>
+
+  <p>
+    On the API surface NVSHMEM also offers <code>get</code> (one-sided read), atomics
+    (<code>nvshmem_int_atomic_add</code> et al.), and signal-based completion
+    (<code>nvshmem_signal_op</code> + <code>nvshmem_wait_until</code>) — which together let you build
+    producer–consumer patterns inside a single kernel. There <i>are</i> collective wrappers
+    (<code>nvshmem_collective_*</code>), but they're not why anyone uses the library;
+    they exist mostly so NVSHMEM can claim feature parity with OpenSHMEM.
+  </p>
+
+  <hr class="rule" />
+
+  <h2><span class="num">03</span> The trade-off, <em>concretely</em></h2>
+
+  <div class="compare-wrap">
+    <table class="compare">
+      <thead>
+        <tr><th></th><th>NCCL</th><th>NVSHMEM</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="label">Programming model</td>
+          <td>Bulk synchronous · collectives</td>
+          <td>One-sided · PGAS (symmetric heap)</td>
+        </tr>
+        <tr>
+          <td class="label">Call site</td>
+          <td>Host code; each op launches a kernel</td>
+          <td>Inside CUDA kernels, alongside compute</td>
+        </tr>
+        <tr>
+          <td class="label">Per-op overhead</td>
+          <td>~5–10 µs kernel launch + sync</td>
+          <td>Single-digit µs end-to-end on NVLink</td>
+        </tr>
+        <tr>
+          <td class="label">Granularity</td>
+          <td>Whole-buffer collectives</td>
+          <td>Word- to message-level puts/gets</td>
+        </tr>
+        <tr>
+          <td class="label">Synchronization</td>
+          <td>Implicit per collective</td>
+          <td>Explicit — fences, signals, atomics</td>
+        </tr>
+        <tr>
+          <td class="label">Algorithm choice</td>
+          <td>Library picks ring / tree / etc.</td>
+          <td>You build the algorithm yourself</td>
+        </tr>
+        <tr>
+          <td class="label">Compute/comm overlap</td>
+          <td>Stream-level (separate kernels)</td>
+          <td>Intra-kernel — true fusion</td>
+        </tr>
+        <tr>
+          <td class="label">Integration</td>
+          <td>PyTorch, Megatron, JAX, DeepSpeed, …</td>
+          <td>Custom kernels; growing in frameworks</td>
+        </tr>
+        <tr>
+          <td class="label">Best at</td>
+          <td>Regular, dense, large messages</td>
+          <td>Irregular, fine-grained, latency-bound</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>
+    Two rows in that table do the most work: <b>call site</b> and <b>granularity</b>.
+    NCCL is host-side and buffer-grained. NVSHMEM is device-side and word-grained.
+    If your problem fits the first column — regular, dense, predictable — NCCL is
+    a more ergonomic and equally fast choice. If it lives in the second column,
+    NCCL forces you to round your communication up to a coarser shape (typically
+    dense all-to-all with worst-case bandwidth) where the cost can be many times
+    what you actually need.
+  </p>
+
+  <hr class="rule" />
+
+  <h2><span class="num">04</span> Where each one wins <em>today</em></h2>
+
+  <h3>Training</h3>
+  <p>
+    NCCL dominates and probably always will. Data-parallel gradient AllReduce is
+    NCCL's home court — large, dense, regular, run thousands of times per training
+    step with a predictable pattern. Tensor-parallel AllGather / ReduceScatter is
+    the same story. The collectives map 1:1 to the operations, the messages are big
+    enough to hide launch overhead, and the framework integration is mature.
+  </p>
+
+  <h3>Inference — dense models</h3>
+  <p>
+    NCCL still wins. Tensor-parallel attention and MLP collectives are regular and
+    large; <code>vLLM</code>, <code>TensorRT-LLM</code>, and <code>SGLang</code> all use NCCL by default for
+    these paths. Sequence-parallel variants (<code>FlashAttention-3</code>'s ring attention,
+    DeepSpeed Ulysses) start to want finer-grained patterns, and you'll see NVSHMEM
+    show up in the research kernels — but in production, NCCL is still the path of
+    least resistance.
+  </p>
+
+  <h3>Inference — MoE</h3>
+  <p>
+    This is where the story flips. In MoE, every token has to be routed to its
+    top-<i>k</i> experts, and the assignment is decided <i>at runtime</i> by a
+    learned router. The resulting communication is fundamentally <b>sparse and
+    irregular</b>: the actual bytes any rank sends to any other rank depend on which
+    tokens picked which experts in this batch.
+  </p>
+
+  <p>
+    NCCL's <code>ncclAllToAll</code> has to assume worst-case bandwidth — every rank
+    sending to every rank — even when most of the rank-to-rank traffic is empty.
+    A custom NVSHMEM kernel can put each token directly into the right expert's
+    queue with one-sided puts and signal completion, paying only for the data that
+    actually moves. <b>DeepEP</b> <a href="https://github.com/deepseek-ai/DeepEP">[3]</a>
+    — the DeepSeek MoE all-to-all kernel released in early 2025 — is the
+    highest-profile example, and the gap over a plain NCCL-based implementation is
+    not a few percent.
+  </p>
+
+  <h3>Fused communication–compute</h3>
+  <p>
+    Anywhere you want to overlap communication and compute <i>inside a single kernel</i>
+    — fused all-to-all + matmul, attention + ring rotation, KV-cache migration during
+    a decode step — NVSHMEM is the only practical option. NCCL operates at kernel
+    granularity, so you can overlap at the stream level but not within a kernel; for
+    workloads where the inner loop wants to issue a small message every few hundred
+    cycles, NVSHMEM is fundamentally the right abstraction.
+  </p>
+
+  <hr class="rule" />
+
+  <h2><span class="num">05</span> Why the <em>NVSHMEM moment</em> is now</h2>
+
+  <p>
+    For most of the 2010s, NVSHMEM lived in HPC. Climate codes, particle simulations,
+    a few graph-analytics papers. The deep learning crowd cared about dense
+    AllReduce, NCCL did dense AllReduce well, and that was the end of the conversation.
+  </p>
+
+  <p>
+    Three things changed in 2024–2025:
+  </p>
+
+  <ul>
+    <li>
+      <b>MoE became a production architecture.</b> Mixtral, DeepSeek-V3, GPT-4o-mini's
+      rumored MoE backbone — production inference is suddenly full of sparse,
+      irregular, expert-routed communication patterns that NCCL was not built for.
+    </li>
+    <li>
+      <b>NVLink Switch and NVL72 lifted the intra-rack bandwidth ceiling.</b> When
+      every GPU in a rack can talk to every other at 1.8 TB/s, the bottleneck is no
+      longer raw bandwidth but per-message overhead — and a kernel-launch per
+      collective is suddenly a real cost rather than rounding error.
+    </li>
+    <li>
+      <b>Disaggregated serving became real.</b> Splitting prefill and decode across
+      different GPU pools (Splitwise, DistServe, DeepSeek's KV-cache router) requires
+      moving KV-cache pages between machines mid-request — exactly the kind of
+      fine-grained, asynchronous traffic that one-sided puts handle gracefully and
+      collectives don't.
+    </li>
+  </ul>
+
+  <p>
+    None of these dethrone NCCL. Training still wants collectives. Dense inference
+    still wants collectives. But the share of the LLM serving stack where collectives
+    are the wrong abstraction has gone from "a research curiosity" to "a production
+    line-item" in two years.
+  </p>
+
+  <hr class="rule" />
+
+  <h2><span class="num">06</span> <em>Picking</em> the right tool</h2>
+
+  <p>The decision usually collapses to two questions:</p>
+
+  <ol>
+    <li>
+      <b>Is your communication a standard collective on regular data?</b> AllReduce
+      gradients, AllGather a tensor, broadcast a parameter. Use NCCL. You'll get
+      something close to peak and you'll write one line of code.
+    </li>
+    <li>
+      <b>Do you want to issue communication from inside a kernel, or is the traffic
+      sparse / irregular?</b> Now you need NVSHMEM. The code is harder, the
+      synchronization is your problem, and the payoff is the ability to do things
+      collectives literally cannot do.
+    </li>
+  </ol>
+
+  <p>
+    A reasonable production stack uses both. NCCL for training and dense-inference
+    TP. NVSHMEM in custom kernels for MoE routing, KV-cache movement, and any
+    fused-comm-compute paths where the inner loop demands fine-grained traffic.
+    They're not competitors — they're answers to different abstraction levels of
+    the same question.
+  </p>
+
+  <p>
+    The interesting open question is what happens to the abstraction layer
+    <i>above</i> both of them. PyTorch's <code>torch.distributed</code> currently exposes the
+    collective view; nothing in mainstream Python frameworks gives you a clean
+    handle on one-sided device-side communication. Until that changes, NVSHMEM
+    lives mostly inside hand-written CUDA — which is fine for kernel authors and
+    a real friction for everyone else. Watch this space; the people writing the
+    next generation of inference engines clearly are.
+  </p>
+
+  <div class="refs">
+    <h3>References</h3>
+    <ol>
+      <li>NVIDIA, <i>NCCL: NVIDIA Collective Communications Library</i>. <a href="https://developer.nvidia.com/nccl">developer.nvidia.com/nccl</a></li>
+      <li>NVIDIA, <i>NVSHMEM Documentation</i>. <a href="https://docs.nvidia.com/nvshmem/api/index.html">docs.nvidia.com/nvshmem</a></li>
+      <li>DeepSeek-AI, <i>DeepEP: An efficient expert-parallel communication library</i>, 2025. <a href="https://github.com/deepseek-ai/DeepEP">github.com/deepseek-ai/DeepEP</a></li>
+      <li>OpenSHMEM specification — the standard NVSHMEM implements. <a href="http://openshmem.org/site/">openshmem.org</a></li>
+    </ol>
+  </div>
+
+  <div class="post-foot">
+    Hangrui Cao · 2026.05.28 · <a href="../index.html#blog">More writing</a> · <a href="../index.html#contact">Contact</a>
+  </div>
+
+</article>
+
+</body>
+</html>
