@@ -335,7 +335,7 @@
       <span class="tag">LLM Inference</span>
       <span class="tag">Distributed Systems</span>
       <span class="dot"></span>
-      <span>~ 12 min read</span>
+      <span>~ 15 min read</span>
     </div>
 
     <h1>NCCL vs NVSHMEM: <em>two answers</em> to the same question</h1>
@@ -583,7 +583,189 @@
 
   <hr class="rule" />
 
-  <h2><span class="num">05</span> Why the <em>NVSHMEM moment</em> is now</h2>
+  <h2><span class="num">05</span> How <em>DeepEP</em> actually does it</h2>
+
+  <p>
+    DeepEP <a href="https://github.com/deepseek-ai/DeepEP">[3]</a> is worth a closer
+    look because it's the cleanest public example of what an NVSHMEM-native
+    all-to-all looks like in production. The library ships two kernel variants
+    that share a programming model but make very different choices about latency
+    versus throughput — and the gap between them is a useful illustration of how
+    the abstraction level we've been talking about actually pays off.
+  </p>
+
+  <p class="pull">
+    Two kernels, one symmetric heap, zero CPU on the critical path.
+  </p>
+
+  <h3>The two-kernel split</h3>
+
+  <p>
+    The first kernel is the <b>high-throughput dispatch / combine</b> pair used in
+    training and prefill. It assumes the batch is large enough that bandwidth, not
+    latency, is the bottleneck, and it leans on both NVLink (intra-node) and RDMA
+    (inter-node) to move FP8-quantized tokens.
+  </p>
+
+  <p>
+    The second is a <b>low-latency decode kernel</b>. During autoregressive decoding
+    each step only routes a tiny number of tokens (one per sequence in the batch),
+    so the bandwidth-optimal algorithm of the first kernel collapses under launch
+    and setup overhead. The low-latency kernel goes pure RDMA via NVSHMEM IBGDA,
+    skips the NVLink-first staging, and is built to minimize per-token wall time.
+  </p>
+
+  <p>
+    Both kernels speak the same NVSHMEM symmetric-heap dialect. They differ in
+    topology choices, FP8 vs BF16 paths, and how they overlap with the surrounding
+    kernel — not in the underlying communication primitive.
+  </p>
+
+  <h3>Dispatch, sketched</h3>
+
+  <p>
+    Strip out the buffer management and the dispatch phase looks like this:
+  </p>
+
+  <pre><span class="kw">__global__</span> <span class="kw">void</span> <span class="fn">dispatch</span>(<span class="kw">const</span> Token *tokens, <span class="kw">const</span> <span class="kw">int</span> *routing,
+                         Token *symmetric_expert_buf,
+                         <span class="kw">int</span> *symmetric_counter) {
+    <span class="kw">int</span> tid = blockIdx.x * blockDim.x + threadIdx.x;
+    <span class="kw">if</span> (tid >= n_tokens) <span class="kw">return</span>;
+
+    <span class="kw">int</span> expert = routing[tid];          <span class="cm">// router output</span>
+    <span class="kw">int</span> dst_pe = expert / experts_per_pe;
+    <span class="kw">int</span> slot   = <span class="fn">nvshmem_int_atomic_fetch_add</span>(
+                     symmetric_counter, 1, dst_pe);
+
+    <span class="cm">// one-sided put: this token into the expert's symmetric buf</span>
+    <span class="fn">nvshmem_putmem_nbi</span>(symmetric_expert_buf + slot * Tsize,
+                       tokens + tid * Tsize, Tsize, dst_pe);
+
+    <span class="cm">// signal completion — destination spins on this counter</span>
+    <span class="fn">nvshmemx_signal_op</span>(&symmetric_done_signal[dst_pe],
+                       1, NVSHMEM_SIGNAL_ADD, dst_pe);
+}</pre>
+
+  <p>
+    Three things in that sketch are doing the real work:
+  </p>
+
+  <ul>
+    <li>
+      <b>Per-token routing decisions, per-token puts.</b> A naive
+      <code>ncclAllToAll</code> would have to round this up to "every rank sends a
+      worst-case-sized buffer to every other rank." DeepEP only moves the bytes
+      that the router actually selected.
+    </li>
+    <li>
+      <b>Remote atomic counter for placement.</b>
+      <code>nvshmem_int_atomic_fetch_add</code> on the destination's counter gives
+      this token a unique slot in the expert's buffer — no global synchronization,
+      no two-sided handshake. The atomic happens on the receiver's GPU.
+    </li>
+    <li>
+      <b>Signal-based completion.</b> Instead of an all-ranks barrier, the receiver
+      kernel spins on <code>nvshmem_signal_wait_until</code> for the counter to
+      reach its expected token count. The barrier collapses from "everyone
+      synchronize" to "wait until I have what I'm owed."
+    </li>
+  </ul>
+
+  <h3>IBGDA: removing the CPU from the path</h3>
+
+  <p>
+    The most under-discussed performance trick in DeepEP is its use of
+    NVSHMEM <b>IBGDA</b> — InfiniBand GPUDirect Async. With IBGDA, the CUDA kernel
+    itself posts work-queue entries directly to the InfiniBand HCA's doorbell. There
+    is no host thread translating an NVSHMEM call into a verbs <code>ibv_post_send</code>,
+    no syscall, no CPU on the critical path at all. The kernel writes 64 bytes to
+    a memory-mapped doorbell and the NIC takes over.
+  </p>
+
+  <p>
+    For the decode kernel this matters enormously: every microsecond of CPU-mediated
+    setup overhead is paid <i>per token per step</i>, and there are thousands of
+    decode steps in a typical generation. With IBGDA, the RDMA send latency is
+    bounded by the NIC and the fabric, not by the host's scheduler or by waking up
+    a proxy thread.
+  </p>
+
+  <h3>Asymmetric topology: NVLink first, then RDMA</h3>
+
+  <p>
+    Modern training clusters are not flat — within a node you have NVLink at
+    hundreds of GB/s; across nodes you have InfiniBand at tens of GB/s. The
+    high-throughput dispatch kernel exploits this asymmetry explicitly:
+  </p>
+
+  <ul>
+    <li>
+      Tokens destined for an expert on a <i>remote</i> node are first sent via
+      RDMA to one designated "landing" GPU on the destination node.
+    </li>
+    <li>
+      That landing GPU then redistributes intra-node via NVLink to the actual
+      expert-holding GPU on its node.
+    </li>
+    <li>
+      The combine path runs in reverse: NVLink reduce within node, then RDMA
+      back to the source node.
+    </li>
+  </ul>
+
+  <p>
+    This avoids the worst-case pattern where every GPU on node A talks directly to
+    every GPU on node B over RDMA — a pattern that consumes <i>N²</i> in HCA queue
+    resources for a constant amount of cross-fabric data. With NCCL's collectives,
+    you'd typically rely on the library to figure this out for you. With NVSHMEM,
+    you express it directly in the kernel and pay only for the topology you have.
+  </p>
+
+  <h3>FP8 in, BF16 out</h3>
+
+  <p>
+    DeepSeek-V3 already trains and infers in FP8 for the GEMMs, and DeepEP's
+    dispatch path carries this through: tokens are <b>quantized to FP8 before
+    they leave the source GPU</b>, halving the bytes on the wire compared to a
+    BF16 dispatch. The combine path returns in BF16 because the expert outputs
+    have already been dequantized on the destination — there's no accuracy reason
+    to re-quantize for the trip home, and BF16 keeps the gradient-friendly numerics
+    intact for training.
+  </p>
+
+  <p>
+    This is the kind of design choice that's natural to make when you're writing
+    the communication kernel yourself. With NCCL you'd be locked into whatever
+    dtype the collective operates on; with NVSHMEM, the wire format is whatever
+    you decide to <code>nvshmem_putmem</code>.
+  </p>
+
+  <h3>What this buys, concretely</h3>
+
+  <p>
+    DeepSeek reports the high-throughput dispatch hitting roughly NVLink line rate
+    on H800 (~150 GB/s) and ~50 GB/s on RDMA for the inter-node leg, with the
+    low-latency kernel completing a decode-step all-to-all in the low hundreds of
+    microseconds. The absolute numbers depend on cluster, NIC count, and
+    measurement methodology — but the qualitative story matters more than the
+    exact figures: a custom NVSHMEM kernel that knows the topology, the sparsity
+    pattern, and the dtype contract beats a generic dense collective by enough
+    that the engineering cost is obviously justified.
+  </p>
+
+  <p>
+    None of these tricks are conceptually new. Each one — one-sided RDMA, atomic
+    counters, IBGDA, topology-aware staging — exists in the HPC literature going
+    back a decade or more. What's new is the cost/benefit calculation: at H100/H800
+    cluster prices, with MoE in production at hundreds of millions of tokens per day,
+    spending a quarter of an engineer-year on a custom kernel that saves 30% on
+    routing cost pays for itself in a week.
+  </p>
+
+  <hr class="rule" />
+
+  <h2><span class="num">06</span> Why the <em>NVSHMEM moment</em> is now</h2>
 
   <p>
     For most of the 2010s, NVSHMEM lived in HPC. Climate codes, particle simulations,
@@ -625,7 +807,7 @@
 
   <hr class="rule" />
 
-  <h2><span class="num">06</span> <em>Picking</em> the right tool</h2>
+  <h2><span class="num">07</span> <em>Picking</em> the right tool</h2>
 
   <p>The decision usually collapses to two questions:</p>
 
