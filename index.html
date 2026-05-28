@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Hangrui Cao — Computational Data Science, CMU</title>
-<meta name="description" content="Hangrui Cao — graduate student in Computational Data Science at Carnegie Mellon University. Research in machine learning, federated learning, and applied data science." />
+<title>Hangrui Cao — Machine Learning Engineer · Zoom</title>
+<meta name="description" content="Hangrui Cao — Machine Learning Engineer at Zoom, Seattle. Previously AWS Neuron and Amazon. Research in LLM inference systems, speculative decoding, and federated learning." />
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,8 +18,8 @@
     --ink-soft: #4a443d;
     --ink-mute: #857d70;
     --rule: #d8d0bf;
-    --accent: #8a3324;          /* burnt sienna / academic crimson */
-    --accent-soft: #b9692a;     /* muted ochre */
+    --accent: #8a3324;
+    --accent-soft: #b9692a;
     --highlight: #fff3c2;
     --serif: "Newsreader", Georgia, "Times New Roman", serif;
     --display: "Instrument Serif", "Newsreader", Georgia, serif;
@@ -28,7 +28,6 @@
   }
 
   * { box-sizing: border-box; }
-
   html { scroll-behavior: smooth; }
 
   body {
@@ -47,7 +46,6 @@
     text-rendering: optimizeLegibility;
   }
 
-  /* Paper grain overlay */
   body::before {
     content: "";
     position: fixed; inset: 0;
@@ -68,14 +66,8 @@
     background-position: 0 100%;
     transition: color 160ms ease, background-size 200ms ease;
   }
-  a:hover {
-    color: var(--accent);
-    background-size: 100% 2px;
-  }
-  a.bare {
-    background: none;
-    color: var(--ink-soft);
-  }
+  a:hover { color: var(--accent); background-size: 100% 2px; }
+  a.bare { background: none; color: var(--ink-soft); }
   a.bare:hover { color: var(--accent); }
 
   /* ───────── Top bar ───────── */
@@ -101,9 +93,9 @@
   }
   .brand .dot { color: var(--accent); }
   nav.primary {
-    display: flex; gap: 1.4rem;
+    display: flex; gap: 1.2rem;
     font-family: var(--mono);
-    font-size: 0.74rem;
+    font-size: 0.72rem;
     letter-spacing: 0.14em;
     text-transform: uppercase;
   }
@@ -117,16 +109,11 @@
 
   @media (max-width: 720px) {
     .topbar-inner { flex-direction: column; align-items: flex-start; gap: 0.6rem; }
-    nav.primary { flex-wrap: wrap; gap: 0.85rem 1.1rem; font-size: 0.68rem; }
+    nav.primary { flex-wrap: wrap; gap: 0.75rem 1rem; font-size: 0.66rem; }
   }
 
   /* ───────── Layout ───────── */
-  main {
-    max-width: 56rem;
-    margin: 0 auto;
-    padding: 3.5rem 1.5rem 6rem;
-  }
-
+  main { max-width: 56rem; margin: 0 auto; padding: 3.5rem 1.5rem 6rem; }
   section { scroll-margin-top: 5rem; }
 
   .section-label {
@@ -154,8 +141,7 @@
   h2.section-title em { color: var(--accent); font-style: italic; }
 
   .rule {
-    border: 0;
-    height: 1px;
+    border: 0; height: 1px;
     background: linear-gradient(to right, transparent, var(--rule) 20%, var(--rule) 80%, transparent);
     margin: 4.5rem 0;
   }
@@ -175,13 +161,23 @@
     text-transform: uppercase;
     color: var(--ink-mute);
     margin-bottom: 1rem;
+    display: flex; flex-wrap: wrap; gap: 0.4rem;
   }
   .hero-meta .pill {
     border: 1px solid var(--rule);
     padding: 2px 8px;
     border-radius: 999px;
-    margin-right: 0.4rem;
   }
+  .hero-meta .pill.live {
+    border-color: var(--accent-soft);
+    color: var(--accent);
+  }
+  .hero-meta .pill.live::before {
+    content: "●"; margin-right: 5px; color: var(--accent-soft);
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
+
   h1.hero-name {
     font-family: var(--display);
     font-weight: 400;
@@ -205,21 +201,21 @@
     color: var(--ink-soft);
     margin: 0 0 1.4rem;
   }
+  .hero-role b { font-style: normal; font-weight: 600; color: var(--ink); }
   .hero-bio {
     max-width: var(--measure);
     color: var(--ink-soft);
     font-size: 1.02rem;
   }
   .hero-bio b { color: var(--ink); font-weight: 600; }
+  .hero-bio + .hero-bio { margin-top: 0.9rem; }
 
   .portrait {
     position: relative;
     width: 180px; height: 220px;
     overflow: hidden;
     border-radius: 2px;
-    box-shadow:
-      0 1px 0 var(--rule),
-      0 12px 30px -18px rgba(26, 23, 20, 0.4);
+    box-shadow: 0 1px 0 var(--rule), 0 12px 30px -18px rgba(26, 23, 20, 0.4);
     transform: rotate(-1.2deg);
     transition: transform 400ms cubic-bezier(.2,.7,.2,1);
   }
@@ -260,18 +256,13 @@
     transition: all 160ms ease;
   }
   .hero-links a:hover {
-    background: var(--ink);
-    color: var(--paper);
-    border-color: var(--ink);
+    background: var(--ink); color: var(--paper); border-color: var(--ink);
   }
   .hero-links a.primary {
-    background: var(--ink);
-    color: var(--paper);
-    border-color: var(--ink);
+    background: var(--ink); color: var(--paper); border-color: var(--ink);
   }
   .hero-links a.primary:hover {
-    background: var(--accent);
-    border-color: var(--accent);
+    background: var(--accent); border-color: var(--accent);
   }
 
   @media (max-width: 720px) {
@@ -281,8 +272,7 @@
 
   /* ───────── News ───────── */
   .news-list {
-    list-style: none;
-    margin: 0; padding: 0;
+    list-style: none; margin: 0; padding: 0;
     font-size: 0.98rem;
   }
   .news-list li {
@@ -302,17 +292,20 @@
   }
   .news-list .desc { color: var(--ink-soft); }
   .news-list .desc b { color: var(--ink); font-weight: 600; }
+  .news-list .desc .venue { font-style: italic; color: var(--ink-soft); }
 
   /* ───────── Publications ───────── */
   .pub {
     display: grid;
     grid-template-columns: 140px 1fr;
     gap: 1.6rem;
-    padding: 1.4rem 0;
+    padding: 1.6rem 0;
     border-bottom: 1px solid var(--rule);
     align-items: start;
   }
   .pub:last-child { border-bottom: none; }
+  .pub.featured { background: linear-gradient(90deg, rgba(255, 243, 194, 0.18), transparent 70%); padding-left: 1rem; margin-left: -1rem; }
+
   .pub-thumb {
     width: 140px; aspect-ratio: 4 / 3;
     overflow: hidden;
@@ -322,10 +315,44 @@
     transition: transform 250ms ease;
   }
   .pub-thumb:hover { transform: translateY(-2px); }
-  .pub-thumb img {
-    width: 100%; height: 100%; object-fit: cover;
-    filter: saturate(0.95);
+  .pub-thumb img { width: 100%; height: 100%; object-fit: cover; filter: saturate(0.95); }
+
+  .pub-card {
+    width: 140px; aspect-ratio: 4 / 3;
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    background:
+      linear-gradient(135deg, rgba(184, 105, 42, 0.08), rgba(138, 51, 36, 0.05)),
+      var(--paper-edge);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 0.6rem;
+    text-align: center;
+    transition: transform 250ms ease;
   }
+  .pub-card:hover { transform: translateY(-2px); }
+  .pub-card .vk {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    margin-bottom: 0.4rem;
+  }
+  .pub-card .vv {
+    font-family: var(--display);
+    font-style: italic;
+    font-size: 1.4rem;
+    line-height: 1;
+    color: var(--accent);
+  }
+  .pub-card .yr {
+    font-family: var(--display);
+    font-size: 1.1rem;
+    color: var(--ink-soft);
+    margin-top: 0.35rem;
+  }
+
   .pub-body h3 {
     font-family: var(--display);
     font-weight: 400;
@@ -339,7 +366,16 @@
     color: var(--ink-soft);
     margin: 0 0 0.25rem;
   }
-  .pub-authors .me { color: var(--ink); font-weight: 600; border-bottom: 1px solid var(--accent-soft); }
+  .pub-authors .me {
+    color: var(--ink);
+    font-weight: 600;
+    border-bottom: 1px solid var(--accent-soft);
+  }
+  .pub-authors .star {
+    color: var(--accent);
+    font-size: 0.75rem;
+    vertical-align: super;
+  }
   .pub-venue {
     font-family: var(--serif);
     font-style: italic;
@@ -350,7 +386,7 @@
   .pub-venue .badge {
     font-family: var(--mono);
     font-style: normal;
-    font-size: 0.7rem;
+    font-size: 0.68rem;
     letter-spacing: 0.1em;
     text-transform: uppercase;
     background: var(--highlight);
@@ -358,6 +394,10 @@
     padding: 2px 7px;
     margin-left: 0.4rem;
     border-radius: 2px;
+  }
+  .pub-venue .badge.nature {
+    background: var(--accent);
+    color: var(--paper);
   }
   .pub-notes {
     font-size: 0.95rem;
@@ -379,40 +419,47 @@
     color: var(--ink-soft);
   }
   .pub-links a:hover {
-    background: var(--ink);
-    color: var(--paper);
-    border-color: var(--ink);
+    background: var(--ink); color: var(--paper); border-color: var(--ink);
+  }
+
+  .pub-footnote {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--ink-mute);
+    margin-top: 1.2rem;
+    padding-top: 0.8rem;
+    border-top: 1px dashed var(--rule);
   }
 
   @media (max-width: 600px) {
     .pub { grid-template-columns: 1fr; }
-    .pub-thumb { width: 100%; max-width: 240px; }
+    .pub-thumb, .pub-card { width: 100%; max-width: 240px; aspect-ratio: 16 / 9; }
   }
 
-  /* ───────── Experience ───────── */
-  .exp {
+  /* ───────── Experience / Education ───────── */
+  .exp, .edu {
     padding: 1.4rem 0;
     border-bottom: 1px solid var(--rule);
     display: grid;
     grid-template-columns: 9rem 1fr;
     gap: 1.6rem;
   }
-  .exp:last-child { border-bottom: none; }
-  .exp-when {
+  .exp:last-child, .edu:last-child { border-bottom: none; }
+  .exp-when, .edu-when {
     font-family: var(--mono);
     font-size: 0.78rem;
     letter-spacing: 0.06em;
     color: var(--accent);
     padding-top: 5px;
   }
-  .exp-role {
+  .exp-role, .edu-school {
     font-family: var(--display);
     font-size: 1.2rem;
     font-weight: 400;
     margin: 0 0 0.15rem;
     line-height: 1.25;
   }
-  .exp-org {
+  .exp-org, .edu-degree {
     font-style: italic;
     color: var(--ink-soft);
     margin: 0 0 0.6rem;
@@ -426,55 +473,19 @@
   .exp ul li { padding: 0.15rem 0; }
   .exp ul li::marker { color: var(--accent-soft); }
 
-  @media (max-width: 600px) {
-    .exp { grid-template-columns: 1fr; gap: 0.5rem; }
-  }
-
-  /* ───────── Education ───────── */
-  .edu-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 0;
-  }
-  .edu {
-    padding: 1.3rem 0;
-    border-bottom: 1px solid var(--rule);
-    display: grid;
-    grid-template-columns: 9rem 1fr;
-    gap: 1.6rem;
-  }
-  .edu:last-child { border-bottom: none; }
-  .edu-when {
+  .edu-gpa, .edu-honors {
     font-family: var(--mono);
-    font-size: 0.78rem;
-    color: var(--accent);
-    padding-top: 5px;
-  }
-  .edu-school {
-    font-family: var(--display);
-    font-size: 1.2rem;
-    margin: 0 0 0.15rem;
-    line-height: 1.25;
-  }
-  .edu-degree {
-    font-style: italic;
-    color: var(--ink-soft);
-    font-size: 0.95rem;
-    margin: 0 0 0.55rem;
-  }
-  .edu-gpa {
-    font-family: var(--mono);
-    font-size: 0.78rem;
+    font-size: 0.74rem;
     background: var(--paper-edge);
     padding: 1px 7px;
     border-radius: 2px;
     color: var(--ink);
     margin-left: 0.4rem;
     font-style: normal;
+    letter-spacing: 0.04em;
   }
-  .courses-bands {
-    display: flex; flex-wrap: wrap; gap: 0.35rem;
-  }
+  .edu-honors { background: transparent; border: 1px solid var(--accent-soft); color: var(--accent); }
+  .courses-bands { display: flex; flex-wrap: wrap; gap: 0.35rem; }
   .course-tag {
     font-family: var(--mono);
     font-size: 0.7rem;
@@ -484,15 +495,40 @@
     border-radius: 2px;
     background: rgba(255,255,255,0.4);
   }
-  .course-tag .grade {
-    color: var(--accent);
-    margin-left: 0.3rem;
-    font-weight: 500;
-  }
 
   @media (max-width: 600px) {
-    .edu { grid-template-columns: 1fr; gap: 0.5rem; }
+    .exp, .edu { grid-template-columns: 1fr; gap: 0.5rem; }
   }
+
+  /* ───────── Open Source ───────── */
+  .oss-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+  .oss {
+    border: 1px solid var(--rule);
+    background: rgba(255,255,255,0.4);
+    padding: 1rem 1.1rem;
+    border-radius: 2px;
+    transition: transform 200ms ease, border-color 200ms ease;
+  }
+  .oss:hover { transform: translateY(-2px); border-color: var(--accent-soft); }
+  .oss-org {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.4rem;
+  }
+  .oss h4 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: 1.15rem;
+    margin: 0 0 0.4rem;
+  }
+  .oss p { font-size: 0.9rem; color: var(--ink-soft); margin: 0; }
 
   /* ───────── Projects ───────── */
   .proj-grid {
@@ -518,9 +554,7 @@
     margin-bottom: 0.9rem;
     border-radius: 2px;
   }
-  .proj-thumb img {
-    width: 100%; height: 100%; object-fit: cover;
-  }
+  .proj-thumb img { width: 100%; height: 100%; object-fit: cover; }
   .proj h4 {
     font-family: var(--display);
     font-weight: 400;
@@ -528,11 +562,15 @@
     line-height: 1.25;
     margin: 0 0 0.5rem;
   }
-  .proj p {
-    font-size: 0.92rem;
-    color: var(--ink-soft);
-    margin: 0 0 0.7rem;
+  .proj-when {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    margin-bottom: 0.35rem;
   }
+  .proj p { font-size: 0.92rem; color: var(--ink-soft); margin: 0 0 0.7rem; }
   .proj-links {
     display: flex; gap: 0.4rem; flex-wrap: wrap;
     font-family: var(--mono);
@@ -547,9 +585,44 @@
     padding: 2px 7px;
     border-radius: 2px;
   }
-  .proj-links a:hover {
-    background: var(--accent);
-    color: var(--paper);
+  .proj-links a:hover { background: var(--accent); color: var(--paper); }
+
+  /* ───────── Tech stack ───────── */
+  .stack {
+    display: grid;
+    grid-template-columns: 9rem 1fr;
+    gap: 1.6rem 1.6rem;
+    align-items: baseline;
+  }
+  .stack-cat {
+    font-family: var(--mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    padding-top: 4px;
+  }
+  .stack-row {
+    padding: 0.5rem 0;
+    border-bottom: 1px dotted var(--rule);
+    color: var(--ink-soft);
+    font-size: 0.95rem;
+  }
+  .stack-row:last-of-type { border-bottom: none; }
+  .stack-row code {
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    color: var(--ink);
+    background: var(--paper-edge);
+    padding: 1px 6px;
+    border-radius: 2px;
+    margin-right: 0.25rem;
+    display: inline-block;
+    margin-bottom: 0.3rem;
+  }
+  @media (max-width: 600px) {
+    .stack { grid-template-columns: 1fr; gap: 0.5rem; }
+    .stack-cat { padding-top: 1rem; }
   }
 
   /* ───────── Contact ───────── */
@@ -575,8 +648,16 @@
     padding-bottom: 2px;
   }
   .contact-card .email:hover { color: var(--accent); }
+  .contact-card .alt-email {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--ink-mute);
+    background: none;
+    margin-top: 0.4rem;
+    display: inline-block;
+  }
   .social {
-    display: flex; gap: 0.7rem;
+    display: flex; flex-wrap: wrap; gap: 0.5rem;
     list-style: none; margin: 0.9rem 0 0; padding: 0;
     font-family: var(--mono);
     font-size: 0.7rem;
@@ -612,20 +693,14 @@
   footer.page-footer a { background: none; color: var(--ink-soft); }
   footer.page-footer a:hover { color: var(--accent); }
 
-  /* ───────── Reveal on load (subtle, restrained) ───────── */
-  .reveal {
-    opacity: 0;
-    transform: translateY(8px);
-    animation: rise 700ms cubic-bezier(.2,.7,.2,1) forwards;
-  }
+  /* reveal on load */
+  .reveal { opacity: 0; transform: translateY(8px); animation: rise 700ms cubic-bezier(.2,.7,.2,1) forwards; }
   .reveal:nth-child(2) { animation-delay: 80ms; }
   .reveal:nth-child(3) { animation-delay: 160ms; }
   .reveal:nth-child(4) { animation-delay: 240ms; }
-  @keyframes rise {
-    to { opacity: 1; transform: translateY(0); }
-  }
+  .reveal:nth-child(5) { animation-delay: 320ms; }
+  @keyframes rise { to { opacity: 1; transform: translateY(0); } }
 
-  /* selection */
   ::selection { background: var(--highlight); color: var(--ink); }
 </style>
 </head>
@@ -639,9 +714,9 @@
       <a href="#about">About</a>
       <a href="#news">News</a>
       <a href="#research">Research</a>
-      <a href="#experience">Experience</a>
-      <a href="#education">Education</a>
       <a href="#projects">Projects</a>
+      <a href="#open-source">Open Source</a>
+      <a href="#education">Education</a>
       <a href="#contact">Contact</a>
     </nav>
   </div>
@@ -653,30 +728,44 @@
   <section id="about" class="hero">
     <div>
       <div class="hero-meta reveal">
-        <span class="pill">Pittsburgh, PA</span>
-        <span>Carnegie Mellon · SCS</span>
+        <span class="pill live">Seattle · Zoom</span>
+        <span class="pill">ML Engineer</span>
+        <span class="pill">LLM Systems</span>
       </div>
 
       <h1 class="hero-name reveal">Hangrui <em>Cao</em></h1>
-      <p class="hero-role reveal">Graduate Student, Computational Data Science</p>
+      <p class="hero-role reveal">
+        <b>Machine Learning Engineer</b> &nbsp;·&nbsp; LLM Inference &amp; Systems
+      </p>
 
       <p class="hero-bio reveal">
-        I am a graduate student in <b>Computational Data Science</b> at Carnegie Mellon University,
-        School of Computer Science. Previously, I received a B.S.E. in <b>Computer Science</b>
-        (minor in Mathematics) from the University of Michigan and a dual B.S.E. in
-        <b>Electrical and Computer Engineering</b> from Shanghai Jiao Tong University.
+        I am a Machine Learning Engineer at <b>Zoom</b> in Seattle, where I work on
+        LLM inference systems — kernel-level optimization, speculative decoding,
+        deployment auto-tuning for <i>vLLM</i>, and the
+        infrastructure behind Zoom's AI services across ASR, translation, and
+        reasoning.
       </p>
-      <p class="hero-bio reveal" style="margin-top: 0.9rem;">
-        My research interests lie at the intersection of <b>machine learning</b>, <b>federated and
-        distributed learning</b>, large-scale <b>data analysis</b>, and the systems that
-        make them work in practice — from databases to full-stack engineering.
+      <p class="hero-bio reveal">
+        Previously, I worked on ML inference at <b>AWS Neuron</b> (Amazon's Trainium
+        accelerator team) and on distributed systems at <b>Amazon</b>. I received my
+        M.S. in <b>Computational Data Science</b> from <b>Carnegie Mellon University</b>,
+        and bachelor's degrees from the <b>University of Michigan</b> and
+        <b>Shanghai Jiao Tong University</b>.
+      </p>
+      <p class="hero-bio reveal">
+        I contribute to <a href="https://github.com/mlc-ai">MLC-AI</a> (WebLLM,
+        MLC-LLM), and previously to <a href="https://github.com/acai-systems">CMU
+        Catalyst Lab</a> and <a href="https://github.com/analytics-zoo">Intel Analytics-Zoo</a>.
+        My research interests span <b>LLM inference systems</b>, <b>speculative
+        decoding</b>, <b>ML compilation on custom accelerators</b>, and
+        <b>federated learning</b>.
       </p>
 
       <div class="hero-links reveal">
-        <a class="primary" href="files/Hangrui_Cao_CV_2021_Nov.pdf">↗ Curriculum Vitae</a>
+        <a class="primary" href="https://scholar.google.com/citations?hl=en&user=qGHpufIAAAAJ">↗ Google Scholar</a>
         <a href="mailto:hangrui@umich.edu">Email</a>
         <a href="https://github.com/DiegoCao/">GitHub</a>
-        <a href="https://www.linkedin.com/in/hangrui-cao-40a936193/">LinkedIn</a>
+        <a href="https://www.linkedin.com/in/hangrui-c/">LinkedIn</a>
         <a href="https://twitter.com/hangrui_cao">Twitter</a>
       </div>
     </div>
@@ -698,46 +787,161 @@
 
     <ul class="news-list">
       <li>
-        <span class="date">2022 · 05</span>
-        <span class="desc">Joined <b>Carnegie Mellon University</b> as a graduate student in Computational Data Science (SCS).</span>
+        <span class="date">2026</span>
+        <span class="desc"><b>"Humanity's Last Exam"</b> published in <span class="venue">Nature</span> (vol. 649, pp. 1139–1146) — an expert-level academic benchmark for evaluating frontier AI capabilities.</span>
       </li>
       <li>
-        <span class="date">2022 · 02</span>
-        <span class="desc">Paper <b>“Birds of a Feather Help: Context-aware Client Selection for Efficient Federated Learning”</b> accepted at <i>FL-AAAI-22</i> for oral presentation.</span>
+        <span class="date">2024 · 12</span>
+        <span class="desc"><b>E-Tamba</b> — efficient Transformer→Mamba layer transplantation — presented at the <span class="venue">NeurIPS 2024 Workshop on Fine-Tuning in Modern ML</span>.</span>
       </li>
       <li>
-        <span class="date">2022 · 05</span>
-        <span class="desc">Graduated from the <b>University of Michigan</b> with a B.S.E. in Computer Science (GPA 3.98/4.00).</span>
+        <span class="date">2024 · 12</span>
+        <span class="desc">Joined the <b>WebLLM</b> paper (MLC-AI) — a high-performance in-browser LLM inference engine, released on arXiv.</span>
       </li>
       <li>
-        <span class="date">2020 · 11</span>
-        <span class="desc">Co-authored paper on <b>Networked Control Systems under Denial-of-Service attack</b> presented at <i>CAC 2020</i>.</span>
+        <span class="date">2024 · 06</span>
+        <span class="desc">Federated client-selection work extended to <span class="venue">IEEE Transactions on Mobile Computing</span>.</span>
+      </li>
+      <li>
+        <span class="date">2024 · 05</span>
+        <span class="desc">Graduated from <b>Carnegie Mellon University</b> with M.S. in Computational Data Science (System Track, 4.0 / 4.0). Served as TA for Advanced Cloud Computing.</span>
       </li>
     </ul>
   </section>
 
   <hr class="rule" />
 
-  <!-- ═════════ RESEARCH / PUBLICATIONS ═════════ -->
+  <!-- ═════════ PUBLICATIONS ═════════ -->
   <section id="research">
     <span class="section-label">Publications</span>
     <h2 class="section-title">Selected <em>research</em></h2>
+    <p style="color: var(--ink-soft); margin: -0.8rem 0 1.8rem; font-size: 0.95rem;">
+      A complete list is available on
+      <a href="https://scholar.google.com/citations?hl=en&user=qGHpufIAAAAJ">Google Scholar</a>.
+      <span style="font-family: var(--mono); font-size: 0.78rem; color: var(--accent);">✱</span>
+      denotes equal contribution.
+    </p>
 
+    <!-- ── Nature: Humanity's Last Exam ── -->
+    <article class="pub featured">
+      <div class="pub-card">
+        <div class="vk">Nature</div>
+        <div class="vv">649</div>
+        <div class="yr">2026</div>
+      </div>
+      <div class="pub-body">
+        <h3>A Benchmark of Expert-level Academic Questions to Assess AI Capabilities</h3>
+        <p class="pub-authors">L. Phan, A. Gatti, Z. Han, …, <span class="me">H. Cao</span>, … <em>et al.</em></p>
+        <p class="pub-venue">
+          <b>Nature</b> 649, pp. 1139–1146 · 2026
+          <span class="badge nature">Nature</span>
+          <span class="badge">Benchmark</span>
+        </p>
+        <p class="pub-notes">
+          Also known as <i>Humanity's Last Exam</i>. A 3,000-question benchmark spanning
+          expert-level academic domains designed to be adversarial to frontier LLMs at
+          the limit of human knowledge.
+        </p>
+        <div class="pub-links">
+          <a href="https://arxiv.org/abs/2501.14249">arXiv</a>
+          <a href="https://lastexam.ai/">Project</a>
+        </div>
+      </div>
+    </article>
+
+    <!-- ── WebLLM ── -->
+    <article class="pub featured">
+      <div class="pub-card">
+        <div class="vk">MLC · arXiv</div>
+        <div class="vv">WebLLM</div>
+        <div class="yr">2024</div>
+      </div>
+      <div class="pub-body">
+        <h3>WebLLM: A High-Performance In-Browser LLM Inference Engine</h3>
+        <p class="pub-authors">C. F. Ruan, Y. Qin, X. Zhou, R. Lai, H. Jin, Y. Dong, B. Hou, M.-S. Yu, Y. Zhai, S. Agarwal, <span class="me">H. Cao</span>, S. Feng, T. Chen</p>
+        <p class="pub-venue">
+          CoRR (arXiv:2412.15803) · MLC-AI · 2024
+          <span class="badge">MLSys</span>
+        </p>
+        <p class="pub-notes">
+          A high-performance LLM inference engine that runs entirely in the browser,
+          leveraging WebGPU for hardware acceleration. Brings privacy-preserving, serverless
+          LLM inference to web applications without any backend infrastructure.
+        </p>
+        <div class="pub-links">
+          <a href="https://arxiv.org/abs/2412.15803">arXiv</a>
+          <a href="https://github.com/mlc-ai/web-llm">Code</a>
+          <a href="https://webllm.mlc.ai/">Demo</a>
+        </div>
+      </div>
+    </article>
+
+    <!-- ── IEEE TMC ── -->
     <article class="pub">
       <a href="images/pic.png" class="pub-thumb bare">
         <img src="images/pic.png" alt="" />
       </a>
       <div class="pub-body">
-        <h3>Birds of a Feather Help: Context-aware Client Selection for Efficient Federated Learning</h3>
-        <p class="pub-authors"><span class="me">Hangrui Cao</span>, Yifei Zhu, <em>et al.</em></p>
+        <h3>Contextual Client Selection for Efficient Federated Learning over Edge Devices</h3>
+        <p class="pub-authors">Q. Pan<span class="star">✱</span>, <span class="me">H. Cao<span class="star">✱</span></span>, Y. Zhu, J. Liu, B. Li</p>
         <p class="pub-venue">
-          International Workshop on Federated Learning, AAAI 2022
+          <b>IEEE Transactions on Mobile Computing</b> · 2024
+          <span class="badge">Journal</span>
+        </p>
+        <p class="pub-notes">
+          Extended journal version of our FL-AAAI work. A contextual-bandit-based client
+          selection method for federated learning over heterogeneous edge devices, with
+          formal regret analysis and improvements over Oort in convergence speed and accuracy.
+        </p>
+        <div class="pub-links">
+          <a href="https://ieeexplore.ieee.org/document/10337693">IEEE</a>
+          <a href="files/Dependence_aware_client_selection_for_FL_.pdf">Preprint</a>
+        </div>
+      </div>
+    </article>
+
+    <!-- ── E-Tamba ── -->
+    <article class="pub">
+      <div class="pub-card">
+        <div class="vk">NeurIPS-W</div>
+        <div class="vv">E-Tamba</div>
+        <div class="yr">2024</div>
+      </div>
+      <div class="pub-body">
+        <h3>E-Tamba: Efficient Transformer-Mamba Layer Transplantation</h3>
+        <p class="pub-authors">D. Peng, <span class="me">H. Cao</span></p>
+        <p class="pub-venue">
+          NeurIPS 2024 Workshop on Fine-Tuning in Modern ML: Principles &amp; Scalability
+          <span class="badge">Workshop</span>
+        </p>
+        <p class="pub-notes">
+          A surgical layer-transplantation procedure converting attention layers in
+          pretrained Transformers into Mamba-style state-space layers — trading compute
+          for sub-quadratic inference while preserving most of the original model's quality
+          with only 0.9 B tokens of fine-tuning and ~3× lower inference memory.
+        </p>
+        <div class="pub-links">
+          <a href="https://scholar.google.com/citations?hl=en&user=qGHpufIAAAAJ">Scholar</a>
+        </div>
+      </div>
+    </article>
+
+    <!-- ── FL-AAAI 2022 ── -->
+    <article class="pub">
+      <a href="images/pic.png" class="pub-thumb bare">
+        <img src="images/pic.png" alt="" />
+      </a>
+      <div class="pub-body">
+        <h3>Birds of a Feather Help: Context-aware Client Selection for Federated Learning</h3>
+        <p class="pub-authors"><span class="me">H. Cao</span>, Q. Pan, Y. Zhu, J. Liu</p>
+        <p class="pub-venue">
+          Int'l Workshop on Trustable, Verifiable &amp; Auditable Federated Learning, AAAI 2022
           <span class="badge">Oral</span>
         </p>
         <p class="pub-notes">
           A novel <i>neural combinatorial contextual bandit</i> (NCCB) intelligently selects
-          clients in each federated round while preserving privacy. The method surpasses
-          the state-of-the-art Oort in both convergence speed and final accuracy.
+          clients in each federated round while preserving privacy, surpassing the state-of-the-art
+          Oort in both convergence speed and final accuracy.
         </p>
         <div class="pub-links">
           <a href="files/Dependence_aware_client_selection_for_FL_.pdf">Paper</a>
@@ -746,99 +950,177 @@
       </div>
     </article>
 
+    <!-- ── Image Colorization ── -->
     <article class="pub">
-      <a href="images/emoji_sample.png" class="pub-thumb bare">
-        <img src="images/emoji_sample.png" alt="" />
+      <a href="images/442photo.png" class="pub-thumb bare">
+        <img src="images/442photo.png" alt="" />
       </a>
       <div class="pub-body">
-        <h3>Large-scale Data Analysis and Group Work Pattern Recognition with the GitHub Archive Dataset</h3>
-        <p class="pub-authors"><span class="me">Hangrui Cao</span>, advised by Qiaozhu Mei</p>
-        <p class="pub-venue">Working paper · University of Michigan</p>
+        <h3>Automatic Image Colorization with Convolutional Neural Networks and Generative Adversarial Networks</h3>
+        <p class="pub-authors">C. Qiu<span class="star">✱</span>, <span class="me">H. Cao<span class="star">✱</span></span>, Q. Ren<span class="star">✱</span>, R. Li<span class="star">✱</span>, Y. Qiu<span class="star">✱</span></p>
+        <p class="pub-venue">
+          CoRR (arXiv) · 2020
+        </p>
         <p class="pub-notes">
-          A large-scale empirical study of how sentimental emoji and text usage relate to
-          GitHub contributors' behavior. Methods include GNN-based social graph embedding,
-          LINE, regression, clustering, and NLP processing.
+          GAN-based image colorization compared against classification-based approaches,
+          evaluated by PSNR and SSIM.
         </p>
         <div class="pub-links">
-          <a href="http://www-personal.umich.edu/~qmei/">Advisor</a>
+          <a href="https://arxiv.org/abs/2508.05068">arXiv</a>
+          <a href="https://github.com/DiegoCao/eecs442_proj.git">Code</a>
         </div>
       </div>
     </article>
 
-    <article class="pub">
-      <a href="images/cac.jpg" class="pub-thumb bare">
-        <img src="images/cac.jpg" alt="" />
-      </a>
-      <div class="pub-body">
-        <h3>Networked Control System under Denial-of-Service Attack: A Simulation Study</h3>
-        <p class="pub-authors"><span class="me">Hangrui Cao</span>, Jing Wu, <em>et al.</em></p>
-        <p class="pub-venue">Chinese Automation Congress (CAC) 2020</p>
-        <p class="pub-notes">
-          Implementation and simulation of a networked control system under DoS attacks
-          using TrueTime, evaluating resilience under adversarial network conditions.
-        </p>
-        <div class="pub-links">
-          <a href="files/2020CACpaper.pdf">Paper</a>
-        </div>
-      </div>
-    </article>
-
-    <article class="pub">
-      <a href="images/MDP_cover.png" class="pub-thumb bare">
-        <img src="images/MDP_cover.png" alt="" />
-      </a>
-      <div class="pub-body">
-        <h3>Resolving the “Shaky Ground Truth” Problem in Driver Behavior Classification</h3>
-        <p class="pub-authors"><span class="me">Hangrui Cao</span>, advised by Carol Flannagan</p>
-        <p class="pub-venue">University of Michigan Transportation Research Institute</p>
-        <p class="pub-notes">
-          Lightweight multi-class CNN for driver behavior classification (90.2% accuracy);
-          designed loss functions, confident learning, and Bayesian CNNs to model
-          aleatoric uncertainty (0.0162) when labels themselves are uncertain.
-        </p>
-        <div class="pub-links">
-          <a href="files/Shaky_ground_truth_presentation.pdf">Slides</a>
-          <a href="https://umtri.umich.edu/people/flannagan-carol/">Advisor</a>
-        </div>
-      </div>
-    </article>
   </section>
 
   <hr class="rule" />
 
-  <!-- ═════════ EXPERIENCE ═════════ -->
-  <section id="experience">
-    <span class="section-label">Industry</span>
-    <h2 class="section-title">Work <em>experience</em></h2>
+  <!-- ═════════ PROJECTS ═════════ -->
+  <section id="projects">
+    <span class="section-label">Research</span>
+    <h2 class="section-title">Selected <em>projects</em></h2>
 
-    <div class="exp">
-      <div class="exp-when">2021 · Intel</div>
-      <div>
-        <h4 class="exp-role">Deep Learning Software Intern</h4>
-        <p class="exp-org">Intel Corporation · Analytics Zoo team</p>
-        <ul>
-          <li>Implemented XGBoost and ResNet in Scala/Java, improving training throughput by <b>9.8%</b>.</li>
-          <li>Built a model-inference pipeline in Python + OpenVINO; designed a YOLOv3 model for cigarette detection.</li>
-          <li>Re-engineered the PPML module, Dockerfile, and unit tests to support Graphene 1.2RC and Intel-SGX.</li>
-          <li>Deployed the FATE federated learning framework in Intel-SGX; tested cluster-serving inference with Flink &amp; Spark.</li>
-        </ul>
-        <div class="pub-links" style="margin-top: 0.6rem;">
-          <a href="https://github.com/DiegoCao/analytics-zoo">Public Code</a>
+    <div class="proj-grid">
+
+      <article class="proj">
+        <div class="proj-when">Jan 2024 — Now</div>
+        <h4>WebLLM &amp; MLC-LLM</h4>
+        <p>Contributed to the TVM-based MLC-LLM / WebLLM projects (>10k stars). Compiler-level optimizations for LLaMA, Gemma, Phi, Qwen; paged KV cache for memory-efficient inference; WebGPU in-browser execution with IndexedDB client-side caching for privacy-preserving on-device LLMs.</p>
+        <div class="proj-links">
+          <a href="https://github.com/mlc-ai/web-llm">WebLLM</a>
+          <a href="https://github.com/mlc-ai/mlc-llm">MLC-LLM</a>
         </div>
-      </div>
-    </div>
+      </article>
 
-    <div class="exp">
-      <div class="exp-when">2021 · UMTRI</div>
-      <div>
-        <h4 class="exp-role">Machine Learning Intern &amp; Research Assistant</h4>
-        <p class="exp-org">University of Michigan Transportation Research Institute</p>
-        <ul>
-          <li>Multi-class CNN for driver-behavior classification with OpenCV — 90.2% accuracy.</li>
-          <li>Designed loss functions, confident learning, and probabilistic models for the “Shaky Ground Truth” uncertainty problem.</li>
-          <li>Implemented Bayesian CNNs to capture weight distributions; obtained aleatoric uncertainty 0.0162.</li>
-          <li>Built an eye-gaze data collection system with PyGaze for labelers and drivers.</li>
-        </ul>
+      <article class="proj">
+        <div class="proj-when">Jan — Jun 2024</div>
+        <h4>E-Tamba · Transformer→Mamba Transplantation</h4>
+        <p>Resource-efficient framework constructing hybrid Transformer–SSM architectures via layer-importance-guided transplantation. ~3× lower inference memory with only 0.9 B fine-tuning tokens, preserving long-context performance.</p>
+        <div class="proj-links">
+          <a href="https://scholar.google.com/citations?hl=en&user=qGHpufIAAAAJ">Scholar</a>
+        </div>
+      </article>
+
+      <article class="proj">
+        <div class="proj-when">Sep — Dec 2023</div>
+        <h4>Reinforcement-Learning LLM Router</h4>
+        <p>An RL-based LLM router using contextualized query vectors and PPO to select among different quantized models, balancing quality vs. latency vs. cost.</p>
+      </article>
+
+      <article class="proj">
+        <div class="proj-thumb"><img src="images/MDP_cover.png" alt="" /></div>
+        <div class="proj-when">Jan 2021 — Jan 2022</div>
+        <h4>Driver-Behavior Classification with Bayesian CNNs</h4>
+        <p>UMTRI Multidisciplinary Development Program. Light-weight CNN (90.2% accuracy), Java labeling software, Bayesian CNN for weight uncertainty, and an end-to-end eye-gaze collector with PyGaze + React.</p>
+        <div class="proj-links">
+          <a href="files/Shaky_ground_truth_presentation.pdf">Slides</a>
+        </div>
+      </article>
+
+      <article class="proj">
+        <div class="proj-when">Dec 2021 — Jun 2022</div>
+        <h4>Collaborative Mobile Super-Resolution</h4>
+        <p>Lightweight collaborative super-resolution for on-device video inference (TensorFlow). 33.8 PSNR on 2K gaming datasets — <b>7.8% over BasicVSR</b>; optimized Android inference pipelines for an 11.2% mobile deployment efficiency gain.</p>
+      </article>
+
+      <article class="proj">
+        <div class="proj-thumb"><img src="images/emoji_sample.png" alt="" /></div>
+        <div class="proj-when">Aug — Dec 2021</div>
+        <h4>Large-scale GitHub Archive Analysis</h4>
+        <p>Constructed user-interaction graphs from GitHub Archive event streams with Spark; trained an unsupervised <b>GraphSAGE</b> model to embed contributor behavior and uncover correlations between linguistic / emoji patterns and group productivity.</p>
+      </article>
+
+      <article class="proj">
+        <div class="proj-thumb"><img src="images/dashboard.png" alt="" /></div>
+        <div class="proj-when">Spring 2022</div>
+        <h4>Real-time Carbon Emission for Low-Carbon Buildings</h4>
+        <p>Reinforcement-learning controller for building emissions; real-time dashboard backed by a streaming database.</p>
+        <div class="proj-links">
+          <a href="https://diegocao-streamweb-app-ucjt6n.streamlitapp.com/">Demo</a>
+        </div>
+      </article>
+
+      <article class="proj">
+        <div class="proj-thumb"><img src="images/emai_voice.png" alt="" /></div>
+        <div class="proj-when">2021</div>
+        <h4>Email Voice Assistant</h4>
+        <p>React + Flask interface for voice-driven email; 7.8% WER speech-to-text with smart-reply via Dialogflow / Rasa.</p>
+        <div class="proj-links">
+          <a href="https://github.com/DiegoCao/email-voice-assistant">Code</a>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <hr class="rule" />
+
+  <!-- ═════════ OPEN SOURCE ═════════ -->
+  <section id="open-source">
+    <span class="section-label">Software</span>
+    <h2 class="section-title">Open-source <em>contributions</em></h2>
+
+    <div class="oss-grid">
+
+      <a class="oss bare" href="https://github.com/mlc-ai">
+        <div class="oss-org">@mlc-ai</div>
+        <h4>MLC-AI · WebLLM</h4>
+        <p>In-browser LLM inference via WebGPU. Compiler-driven model deployment to web, mobile, and edge (10k+ stars).</p>
+      </a>
+
+      <a class="oss bare" href="https://github.com/acai-systems">
+        <div class="oss-org">@acai-systems</div>
+        <h4>CMU Catalyst Group</h4>
+        <p>Systems-for-AI research group at Carnegie Mellon working on efficient model serving and training.</p>
+      </a>
+
+      <a class="oss bare" href="https://github.com/analytics-zoo">
+        <div class="oss-org">@analytics-zoo</div>
+        <h4>Intel Analytics-Zoo</h4>
+        <p>Unified analytics + AI platform for Apache Spark and Ray. Contributed during 2021 Intel internship.</p>
+      </a>
+
+      <a class="oss bare" href="https://github.com/DiegoCao">
+        <div class="oss-org">@DiegoCao</div>
+        <h4>Personal Repositories</h4>
+        <p>Public repos across ML systems, web infrastructure, and research codebases.</p>
+      </a>
+
+    </div>
+  </section>
+
+  <hr class="rule" />
+
+  <!-- ═════════ TECH STACK ═════════ -->
+  <section id="stack">
+    <span class="section-label">Stack</span>
+    <h2 class="section-title">Tools I <em>work with</em></h2>
+
+    <div class="stack">
+      <div class="stack-cat">LLM Inference</div>
+      <div class="stack-row">
+        <code>vLLM</code><code>SGLang</code><code>TensorRT-LLM</code><code>CuTe DSL</code><code>Cutile</code><code>Triton</code><code>FlashAttention</code><code>TVM / MLC-LLM</code>
+      </div>
+
+      <div class="stack-cat">ML &amp; Systems</div>
+      <div class="stack-row">
+        <code>PyTorch</code><code>TensorFlow</code><code>MLIR</code><code>cuDNN</code><code>MPI</code><code>OpenMP</code><code>NCCL</code>
+      </div>
+
+      <div class="stack-cat">Languages</div>
+      <div class="stack-row">
+        <code>C++</code><code>Python</code><code>CUDA</code><code>Rust</code><code>Go</code><code>Java</code><code>TypeScript</code><code>Scala</code><code>JavaScript</code><code>SQL</code><code>Bash</code>
+      </div>
+
+      <div class="stack-cat">Cloud &amp; Infra</div>
+      <div class="stack-row">
+        <code>AWS</code><code>Kubernetes</code><code>Docker</code><code>Terraform</code><code>Spark</code><code>Step Functions</code><code>Smithy</code><code>Azure</code><code>GCP</code>
+      </div>
+
+      <div class="stack-cat">Data</div>
+      <div class="stack-row">
+        <code>PostgreSQL</code><code>MongoDB</code><code>Redis</code><code>Kafka</code><code>Cassandra</code><code>BigQuery</code><code>Redshift</code><code>InfluxDB</code><code>TimescaleDB</code>
       </div>
     </div>
   </section>
@@ -850,66 +1132,65 @@
     <span class="section-label">Academic</span>
     <h2 class="section-title">Education &amp; <em>training</em></h2>
 
-    <div class="edu-grid">
+    <div>
 
       <div class="edu">
-        <div class="edu-when">2022 — 2023</div>
+        <div class="edu-when">2022 — May 2024</div>
         <div>
           <h4 class="edu-school">Carnegie Mellon University</h4>
           <p class="edu-degree">
-            M.S. Computational Data Science · School of Computer Science
+            M.S. Computational Data Science · System Track · School of Computer Science
             <span class="edu-gpa">GPA 4.0 / 4.0</span>
+            <span class="edu-honors">TA · Advanced Cloud Computing</span>
           </p>
           <div class="courses-bands">
-            <span class="course-tag">Intro to Computing Systems<span class="grade">A</span></span>
-            <span class="course-tag">Search Engines</span>
+            <span class="course-tag">Distributed Systems</span>
+            <span class="course-tag">Advanced Cloud Computing</span>
+            <span class="course-tag">Parallel Computer Architecture &amp; Programming</span>
+            <span class="course-tag">Databases &amp; Management Systems</span>
+            <span class="course-tag">Compiler</span>
+            <span class="course-tag">Storage Systems</span>
+            <span class="course-tag">Advanced NLP</span>
             <span class="course-tag">Machine Learning</span>
-            <span class="course-tag">Foundations of CDS</span>
+            <span class="course-tag">Search Engine</span>
+            <span class="course-tag">Computer Systems</span>
           </div>
         </div>
       </div>
 
       <div class="edu">
-        <div class="edu-when">2020 — 2022</div>
+        <div class="edu-when">2020 — May 2022</div>
         <div>
           <h4 class="edu-school">University of Michigan, Ann Arbor</h4>
           <p class="edu-degree">
             B.S.E. Computer Science · Minor in Mathematics
-            <span class="edu-gpa">GPA 3.98 / 4.00</span>
+            <span class="edu-gpa">GPA 3.978 / 4.00</span>
+            <span class="edu-honors">Dean's List · University Honors</span>
           </p>
           <div class="courses-bands">
-            <span class="course-tag">Computer Vision<span class="grade">A</span></span>
-            <span class="course-tag">Machine Learning<span class="grade">A</span></span>
-            <span class="course-tag">Conversational AI<span class="grade">A</span></span>
-            <span class="course-tag">HCI<span class="grade">A+</span></span>
-            <span class="course-tag">NLP<span class="grade">A</span></span>
-            <span class="course-tag">Databases<span class="grade">A+</span></span>
-            <span class="course-tag">Algorithms<span class="grade">A</span></span>
-            <span class="course-tag">Computer Networks<span class="grade">A+</span></span>
-            <span class="course-tag">Numerical Analysis<span class="grade">A</span></span>
-            <span class="course-tag">Matrix Theory<span class="grade">A</span></span>
+            <span class="course-tag">Data Structures &amp; Algorithms</span>
+            <span class="course-tag">Computer Organization</span>
+            <span class="course-tag">Computer Networks</span>
+            <span class="course-tag">Operating Systems</span>
+            <span class="course-tag">Computing Systems</span>
+            <span class="course-tag">DBMS</span>
+            <span class="course-tag">Computer Foundation</span>
+            <span class="course-tag">Machine Learning</span>
+            <span class="course-tag">Computer Vision</span>
+            <span class="course-tag">NLP</span>
           </div>
         </div>
       </div>
 
       <div class="edu">
-        <div class="edu-when">2018 — 2022</div>
+        <div class="edu-when">2018 — Aug 2020</div>
         <div>
           <h4 class="edu-school">Shanghai Jiao Tong University</h4>
           <p class="edu-degree">
-            B.S.E. Electrical &amp; Computer Engineering
-            <span class="edu-gpa">GPA 3.874 / 4.00</span>
+            B.S.E. Electrical &amp; Computer Engineering · UM-SJTU Dual Degree
+            <span class="edu-gpa">GPA 3.89 / 4.00</span>
+            <span class="edu-honors">Fan Xuji Scholarship · Undergrad Excellence</span>
           </p>
-          <div class="courses-bands">
-            <span class="course-tag">Programming &amp; DS<span class="grade">A+</span></span>
-            <span class="course-tag">Logic Design<span class="grade">A</span></span>
-            <span class="course-tag">Electronic Circuits<span class="grade">A</span></span>
-            <span class="course-tag">Intro to Engineering<span class="grade">A+</span></span>
-            <span class="course-tag">Probabilistic Methods<span class="grade">A</span></span>
-            <span class="course-tag">Discrete Math<span class="grade">A</span></span>
-            <span class="course-tag">Honors Math II–IV<span class="grade">A+</span></span>
-            <span class="course-tag">Honors Physics I–II<span class="grade">A+</span></span>
-          </div>
         </div>
       </div>
 
@@ -917,49 +1198,9 @@
         <div class="edu-when">2020 · Winter</div>
         <div>
           <h4 class="edu-school">Ritsumeikan University</h4>
-          <p class="edu-degree">Winter Program · Kyoto, Japan</p>
+          <p class="edu-degree">Winter Exchange Program · Kyoto, Japan</p>
         </div>
       </div>
-
-    </div>
-  </section>
-
-  <hr class="rule" />
-
-  <!-- ═════════ PROJECTS ═════════ -->
-  <section id="projects">
-    <span class="section-label">Course &amp; Side</span>
-    <h2 class="section-title">Selected <em>projects</em></h2>
-
-    <div class="proj-grid">
-
-      <article class="proj">
-        <div class="proj-thumb"><img src="images/442photo.png" alt="" /></div>
-        <h4>Automatic Image Colorization with CNN &amp; GAN</h4>
-        <p>Generative adversarial colorization compared against classification approaches, evaluated by PSNR and SSIM.</p>
-        <div class="proj-links">
-          <a href="https://web.eecs.umich.edu/~justincj/teaching/eecs442/projects/WI2021/pdfs/068.pdf">Paper</a>
-          <a href="https://github.com/DiegoCao/eecs442_proj.git">Code</a>
-        </div>
-      </article>
-
-      <article class="proj">
-        <div class="proj-thumb"><img src="images/dashboard.png" alt="" /></div>
-        <h4>Real-time Carbon Emission Evaluation for Low-Carbon Buildings</h4>
-        <p>Reinforcement-learning controller for emissions; real-time tracking dashboard backed by a streaming database.</p>
-        <div class="proj-links">
-          <a href="https://diegocao-streamweb-app-ucjt6n.streamlitapp.com/">Live Demo</a>
-        </div>
-      </article>
-
-      <article class="proj">
-        <div class="proj-thumb"><img src="images/emai_voice.png" alt="" /></div>
-        <h4>Email Voice Assistant</h4>
-        <p>React + Flask interface for voice-driven email; 7.8% WER speech-to-text and smart-reply with Dialogflow / Rasa.</p>
-        <div class="proj-links">
-          <a href="https://github.com/DiegoCao/email-voice-assistant">Code</a>
-        </div>
-      </article>
 
     </div>
   </section>
@@ -974,15 +1215,17 @@
     <div class="contact-card">
       <div>
         <p style="margin-bottom: 0.6rem;">
-          I'm always happy to discuss research, collaborations, or interesting ideas.
-          The fastest way to reach me is by email:
+          Happy to chat about ML infrastructure, LLM inference, research collaborations,
+          or open-source contributions. Email is the fastest way:
         </p>
-        <a class="email" href="mailto:hangrui@umich.edu">hangrui@umich.edu</a>
+        <a class="email" href="mailto:hangrui@umich.edu">hangrui@umich.edu</a><br/>
+        <a class="alt-email" href="mailto:hangruic@alumni.cmu.edu">hangruic@alumni.cmu.edu</a>
+
         <ul class="social">
+          <li><a href="https://scholar.google.com/citations?hl=en&user=qGHpufIAAAAJ">Scholar</a></li>
           <li><a href="https://github.com/DiegoCao/">GitHub</a></li>
-          <li><a href="https://www.linkedin.com/in/hangrui-cao-40a936193/">LinkedIn</a></li>
+          <li><a href="https://www.linkedin.com/in/hangrui-c/">LinkedIn</a></li>
           <li><a href="https://twitter.com/hangrui_cao">Twitter</a></li>
-          <li><a href="https://www.instagram.com/hangruic/">Instagram</a></li>
         </ul>
       </div>
       <div style="font-family: var(--display); font-size: 4rem; line-height: 1; color: var(--accent-soft); opacity: 0.7;">✉</div>
@@ -993,11 +1236,10 @@
 
 <footer class="page-footer">
   <span>© 2026 Hangrui Cao · All rights reserved</span>
-  <span>Set in Instrument Serif, Newsreader &amp; JetBrains Mono</span>
+  <span>Last updated May 2026 · Set in Instrument Serif, Newsreader &amp; JetBrains Mono</span>
 </footer>
 
 <script>
-  // Scrollspy: highlight nav based on section in view
   const sections = document.querySelectorAll('main section[id]');
   const navLinks = document.querySelectorAll('nav.primary a');
   const byId = (id) => document.querySelector(`nav.primary a[href="#${id}"]`);
