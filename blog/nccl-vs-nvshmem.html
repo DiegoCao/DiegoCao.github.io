@@ -303,6 +303,64 @@
   .refs ol { font-size: 0.92rem; color: var(--ink-soft); padding-left: 1.3rem; }
   .refs ol li { padding: 0.25rem 0; }
 
+  /* ── Comments ── */
+  .comments {
+    margin-top: 4rem;
+    padding-top: 1.6rem;
+    border-top: 1px solid var(--rule);
+    max-width: var(--measure);
+  }
+  .comments-eyebrow {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 0.6rem;
+    display: inline-flex; align-items: center; gap: 0.6rem;
+  }
+  .comments-eyebrow::before {
+    content: "§";
+    font-family: var(--display); font-style: italic;
+    font-size: 1rem; color: var(--accent-soft);
+    letter-spacing: 0;
+  }
+  .comments h2 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: 1.65rem;
+    margin: 0 0 0.6rem;
+    color: var(--ink);
+    letter-spacing: -0.005em;
+  }
+  .comments h2 em { font-style: italic; color: var(--accent); }
+  .comments-intro {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 0.98rem;
+    color: var(--ink-soft);
+    margin: 0 0 1.4rem;
+    max-width: var(--measure);
+  }
+  .comments-intro code {
+    font-family: var(--mono);
+    font-size: 0.82em;
+    font-style: normal;
+    background: var(--code-bg);
+    color: var(--code-ink);
+    padding: 1px 5px;
+    border-radius: 2px;
+  }
+
+  /* Container for the embedded Giscus widget */
+  .giscus-wrap {
+    margin-top: 1rem;
+    min-height: 200px;
+  }
+  /* Style giscus iframe to fit the editorial palette */
+  .giscus, .giscus-frame { width: 100%; }
+  .giscus-frame { border: 1px solid var(--rule); border-radius: 2px; }
+
   .post-foot {
     margin-top: 4rem;
     font-family: var(--mono);
@@ -853,8 +911,41 @@
     </ol>
   </div>
 
+  <!-- ═════════ COMMENTS ═════════ -->
+  <section class="comments" id="comments">
+    <span class="comments-eyebrow">Discussion</span>
+    <h2>Comments &amp; <em>responses</em></h2>
+    <p class="comments-intro">
+      Reply with your GitHub account. Comments are stored as
+      <a href="https://github.com/DiegoCao/DiegoCao.github.io/discussions">GitHub Discussions</a>
+      on this repo — there's no separate database, no third-party service holding your
+      data, and every thread is just a discussion you can read, edit, or moderate
+      from GitHub itself. The integration is powered by
+      <a href="https://giscus.app">Giscus</a>.
+    </p>
+
+    <div class="giscus-wrap">
+      <script src="https://giscus.app/client.js"
+              data-repo="DiegoCao/DiegoCao.github.io"
+              data-repo-id="MDEwOlJlcG9zaXRvcnkzMjA1MTUzOTc="
+              data-category="General"
+              data-category-id="DIC_kwDOExqtRc4C-AQf"
+              data-mapping="pathname"
+              data-strict="0"
+              data-reactions-enabled="1"
+              data-emit-metadata="0"
+              data-input-position="bottom"
+              data-theme="light"
+              data-lang="en"
+              data-loading="lazy"
+              crossorigin="anonymous"
+              async>
+      </script>
+    </div>
+  </section>
+
   <div class="post-foot">
-    Hangrui Cao · 2026.05.28 · <a href="index.html">More writing</a> · <a href="../index.html#contact">Contact</a>
+    Hangrui Cao · 2026.05.28 · <a href="index.html">More writing</a> · <a href="../index.html#contact">Contact</a> · <a href="#comments">Comments</a>
   </div>
 
 </article>
