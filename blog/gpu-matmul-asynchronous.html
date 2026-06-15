@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>How GPU Matmul Got Asynchronous — Hangrui Cao</title>
+<meta name="description" content="Pre-Ampere to Blackwell: each NVIDIA data-center GPU generation killed the bottleneck the last one made visible. A tour of cp.async, TMA, WGMMA, persistent kernels, and tensor memory." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --paper: #f7f3ec;
+    --paper-edge: #efe9dd;
+    --ink: #1a1714;
+    --ink-soft: #4a443d;
+    --ink-mute: #857d70;
+    --rule: #d8d0bf;
+    --accent: #8a3324;
+    --accent-soft: #b9692a;
+    --highlight: #fff3c2;
+    --code-bg: #f1ecdf;
+    --code-ink: #2a2521;
+    --serif: "Newsreader", Georgia, "Times New Roman", serif;
+    --display: "Instrument Serif", "Newsreader", Georgia, serif;
+    --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+    --measure: 38rem;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background:
+      radial-gradient(1200px 600px at 80% -10%, rgba(185, 105, 42, 0.05), transparent 60%),
+      var(--paper);
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: 18px;
+    line-height: 1.7;
+    font-feature-settings: "kern", "liga", "calt", "onum";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body::before {
+    content: "";
+    position: fixed; inset: 0;
+    pointer-events: none;
+    background-image:
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.1  0 0 0 0 0.09  0 0 0 0 0.07  0 0 0 0.04 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    opacity: 0.5;
+    mix-blend-mode: multiply;
+    z-index: 999;
+  }
+
+  a {
+    color: var(--ink);
+    text-decoration: none;
+    background-image: linear-gradient(var(--accent), var(--accent));
+    background-repeat: no-repeat;
+    background-size: 100% 1px;
+    background-position: 0 100%;
+    transition: color 160ms ease, background-size 200ms ease;
+  }
+  a:hover { color: var(--accent); background-size: 100% 2px; }
+  a.bare { background: none; }
+
+  /* ── Top bar ── */
+  .topbar {
+    position: sticky; top: 0; z-index: 50;
+    backdrop-filter: blur(8px) saturate(1.1);
+    -webkit-backdrop-filter: blur(8px) saturate(1.1);
+    background: rgba(247, 243, 236, 0.78);
+    border-bottom: 1px solid var(--rule);
+  }
+  .topbar-inner {
+    max-width: 48rem;
+    margin: 0 auto;
+    padding: 0.85rem 1.5rem;
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: 1.5rem;
+  }
+  .brand {
+    font-family: var(--display);
+    font-size: 1.2rem;
+    letter-spacing: 0.01em;
+    background: none;
+  }
+  .brand .dot { color: var(--accent); }
+  .back-link {
+    background: none;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .back-link:hover { color: var(--accent); }
+
+  article {
+    max-width: 44rem;
+    margin: 0 auto;
+    padding: 4rem 1.5rem 6rem;
+  }
+
+  .post-header { margin-bottom: 3rem; }
+
+  .post-eyebrow {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1rem;
+    display: flex; flex-wrap: wrap; gap: 0.6rem;
+  }
+  .post-eyebrow .dot::before { content: "·"; margin: 0 0.2rem; color: var(--ink-mute); }
+  .post-eyebrow .tag {
+    border: 1px solid var(--rule);
+    color: var(--ink-soft);
+    padding: 1px 8px;
+    border-radius: 999px;
+    letter-spacing: 0.16em;
+  }
+
+  h1 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    line-height: 1.05;
+    letter-spacing: -0.012em;
+    margin: 0 0 1rem;
+  }
+  h1 em { font-style: italic; color: var(--accent); }
+
+  .lede {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 1.18rem;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    max-width: var(--measure);
+    margin: 0;
+  }
+
+  article > p, article > ul, article > ol {
+    max-width: var(--measure);
+  }
+  article p { margin: 0 0 1.2rem; }
+  article p b { font-weight: 600; color: var(--ink); }
+  article p i, article p em { font-style: italic; }
+
+  article h2 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(1.45rem, 3vw, 1.95rem);
+    line-height: 1.2;
+    letter-spacing: -0.005em;
+    margin: 3rem 0 1.1rem;
+    color: var(--ink);
+  }
+  article h2 .num {
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    color: var(--accent);
+    letter-spacing: 0.16em;
+    margin-right: 0.6rem;
+    vertical-align: 5px;
+    font-style: normal;
+  }
+  article h2 em { font-style: italic; color: var(--accent); }
+
+  article h3 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-style: italic;
+    font-size: 1.3rem;
+    margin: 2rem 0 0.7rem;
+    color: var(--ink);
+  }
+
+  article ul { padding-left: 1.3rem; margin: 0 0 1.4rem; }
+  article ul li { padding: 0.18rem 0; color: var(--ink-soft); }
+  article ul li::marker { color: var(--accent-soft); }
+
+  code {
+    font-family: var(--mono);
+    font-size: 0.86em;
+    background: var(--code-bg);
+    color: var(--code-ink);
+    padding: 1px 5px;
+    border-radius: 2px;
+  }
+  pre {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    line-height: 1.55;
+    background: var(--code-bg);
+    color: var(--code-ink);
+    padding: 1.1rem 1.3rem;
+    border-radius: 3px;
+    border-left: 3px solid var(--accent-soft);
+    overflow-x: auto;
+    margin: 0 0 1.5rem;
+    max-width: var(--measure);
+  }
+  pre code {
+    background: none;
+    padding: 0;
+    font-size: inherit;
+    color: inherit;
+  }
+  pre.timing {
+    font-size: 0.74rem;
+    line-height: 1.5;
+    border-left-color: var(--accent);
+    background: #f4eedc;
+  }
+  .kw { color: #8a3324; font-weight: 500; }
+  .ty { color: #5a4a18; }
+  .fn { color: #2c4a3e; }
+  .cm { color: #857d70; font-style: italic; }
+  .st { color: #6f4218; }
+
+  .pull {
+    font-family: var(--display);
+    font-style: italic;
+    font-size: 1.5rem;
+    line-height: 1.35;
+    color: var(--ink);
+    border-left: 2px solid var(--accent);
+    padding: 0.5rem 0 0.5rem 1.5rem;
+    margin: 2rem 0;
+    max-width: var(--measure);
+  }
+
+  .caption {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    color: var(--ink-mute);
+    text-transform: uppercase;
+    margin: -1.1rem 0 1.6rem;
+    max-width: var(--measure);
+  }
+
+  /* Generation summary table */
+  .gen-wrap { max-width: var(--measure); margin: 0 0 1.8rem; overflow-x: auto; }
+  table.gen {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.92rem;
+    background: rgba(255,255,255,0.4);
+  }
+  table.gen th, table.gen td {
+    border-bottom: 1px solid var(--rule);
+    padding: 0.6rem 0.8rem;
+    text-align: left;
+    vertical-align: top;
+  }
+  table.gen thead th {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--paper-edge);
+    border-bottom: 1px solid var(--accent-soft);
+    font-weight: 500;
+  }
+  table.gen tbody tr:last-child td { border-bottom: none; }
+  table.gen td.label {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    width: 22%;
+  }
+  table.gen td { color: var(--ink-soft); }
+  table.gen td.win { color: #2c4a3e; }
+  table.gen td.prob { color: var(--accent); }
+
+  .rule {
+    border: 0; height: 1px;
+    background: linear-gradient(to right, transparent, var(--rule) 20%, var(--rule) 80%, transparent);
+    margin: 3.5rem 0;
+    max-width: var(--measure);
+  }
+
+  .refs {
+    margin-top: 3rem;
+    padding-top: 1.2rem;
+    border-top: 1px solid var(--rule);
+    max-width: var(--measure);
+  }
+  .refs h3 {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 0.6rem;
+    font-style: normal;
+  }
+  .refs ol { font-size: 0.92rem; color: var(--ink-soft); padding-left: 1.3rem; }
+  .refs ol li { padding: 0.25rem 0; }
+
+  /* ── Comments ── */
+  .comments {
+    margin-top: 4rem;
+    padding-top: 1.6rem;
+    border-top: 1px solid var(--rule);
+    max-width: var(--measure);
+  }
+  .comments-eyebrow {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 0.6rem;
+    display: inline-flex; align-items: center; gap: 0.6rem;
+  }
+  .comments-eyebrow::before {
+    content: "§";
+    font-family: var(--display); font-style: italic;
+    font-size: 1rem; color: var(--accent-soft);
+    letter-spacing: 0;
+  }
+  .comments h2 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: 1.65rem;
+    margin: 0 0 0.6rem;
+    color: var(--ink);
+    letter-spacing: -0.005em;
+  }
+  .comments h2 em { font-style: italic; color: var(--accent); }
+  .comments-intro {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 0.98rem;
+    color: var(--ink-soft);
+    margin: 0 0 1.4rem;
+    max-width: var(--measure);
+  }
+  .giscus-wrap { margin-top: 1rem; min-height: 200px; }
+  .giscus, .giscus-frame { width: 100%; }
+  .giscus-frame { border: 1px solid var(--rule); border-radius: 2px; }
+
+  .post-foot {
+    margin-top: 4rem;
+    font-family: var(--mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.06em;
+    color: var(--ink-mute);
+    text-align: center;
+  }
+  .post-foot a { background: none; color: var(--ink-soft); }
+
+  ::selection { background: var(--highlight); color: var(--ink); }
+</style>
+</head>
+
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="../index.html">Hangrui Cao<span class="dot">.</span></a>
+    <a class="back-link" href="index.html">← Back to writing</a>
+  </div>
+</header>
+
+<article>
+
+  <header class="post-header">
+    <div class="post-eyebrow">
+      <span>2026 · 06 · 14</span>
+      <span class="dot"></span>
+      <span class="tag">GPU Architecture</span>
+      <span class="tag">CUDA</span>
+      <span class="dot"></span>
+      <span>~ 13 min read</span>
+    </div>
+
+    <h1>How GPU matmul got <em>asynchronous</em></h1>
+
+    <p class="lede">
+      The last five years of NVIDIA's data-center GPUs can be told as a sequence
+      of overlap problems, each generation killing the bottleneck the previous
+      one made visible. Pre-Ampere was synchronous. Ampere unlocked in-CTA
+      pipelining. Hopper unlocked cross-tile pipelining. Blackwell unlocked
+      a three-stage pipeline that bypasses the register file. The pattern is
+      so consistent it's worth tracing on purpose.
+    </p>
+  </header>
+
+  <p>
+    There is a particular flavour of progress that GPU architecture follows
+    which is harder to see if you're reading whitepapers one generation at a
+    time but obvious if you line them up next to each other: each generation
+    of NVIDIA Tensor Core hardware quietly removes one source of serialization,
+    and then the next generation goes to work on what that exposes.
+  </p>
+
+  <p class="pull">
+    Each generation kills the latency the last one made visible.
+  </p>
+
+  <p>
+    This post walks through that progression for matrix-multiply kernels — the
+    workload that most of NVIDIA's data-center engineering decisions are made
+    in service of — starting from the Volta / Turing era of synchronous
+    instruction streams and ending at Blackwell's three-stage pipeline backed
+    by dedicated tensor memory.
+  </p>
+
+  <hr class="rule" />
+
+  <h2><span class="num">01</span> Pre-Ampere: when memory <em>blocked</em> compute</h2>
+
+  <p>
+    Before <code>cp.async</code>, memory loads and arithmetic ran on the same
+    in-order instruction stream from each warp's perspective. A thread that
+    issued a global-memory load through the L1 / L2 path simply waited until
+    the data arrived in registers before it could do anything else with it. From
+    inside a single CTA, the timeline of a matmul tile looked like this:
+  </p>
+
+  <pre class="timing"><span class="cm">// single CTA · synchronous · serial within itself</span>
+CTA0 │ ──[Load A]──[Wait]──[Load B]──[Wait]──[Compute]──[Wait]──[Store]──</pre>
+
+  <p>
+    The standard workaround was to lean on the SM's warp scheduler. If you sized
+    each CTA small enough that the SM could host two, three, four of them at
+    once, the scheduler would happily issue instructions from a different CTA
+    while the first was stalled on a load. From the SM's point of view, that
+    looked like:
+  </p>
+
+  <pre class="timing"><span class="cm">// multi-CTA · SM-level overlap, sometimes called "double buffering"</span>
+CTA0 │ ──[Load]──[Wait]────[Compute]────[Store]──
+CTA1 │     ──[Load]──[Wait]────[Compute]────[Store]──
+CTA2 │         ──[Load]──[Wait]────[Compute]────[Store]──
+       └──── overlap comes from CTA-to-CTA scheduling ────┘</pre>
+
+  <p>
+    This worked. It also paid for itself in two awkward ways:
+  </p>
+
+  <ul>
+    <li>
+      <b>Smaller tiles per CTA.</b> An SM has a fixed budget of registers and
+      shared memory. To fit several CTAs concurrently you had to slice each one
+      into a smaller tile — which meant more total kernel launches, more index
+      arithmetic, and less amortization of the MMA pipeline you were trying to
+      keep fed.
+    </li>
+    <li>
+      <b>Forced trade-off between occupancy and resources.</b> If a kernel
+      wanted the biggest possible tile (good for arithmetic intensity), you'd
+      end up with one CTA per SM and no warp-scheduler-based overlap at all.
+      Picking a tile size was as much about occupancy gymnastics as about the
+      math itself.
+    </li>
+  </ul>
+
+  <p>
+    So pre-Ampere kernels were a constant negotiation between three constraints
+    — tile size, register pressure, occupancy — none of which had anything to
+    do with the matrix multiplication itself. Removing that negotiation is what
+    Ampere set out to do.
+  </p>
+
+  <hr class="rule" />
+
+  <h2><span class="num">02</span> Ampere: <em>cp.async</em> and in-CTA pipelining</h2>
+
+  <p>
+    Ampere's headline addition for matmul wasn't a faster Tensor Core; it was
+    the <code>cp.async</code> instruction. The semantics are simple but the
+    consequences are not: a thread can issue a global → shared memory copy and
+    immediately continue executing without blocking on the load. The hardware
+    tracks the in-flight copy with a per-thread async-copy pipeline; you fence
+    on it with <code>cp.async.wait_group</code> when you actually need the data.
+  </p>
+
+  <pre><span class="cm">// PTX-flavoured pseudocode for a software-pipelined matmul iter</span>
+<span class="fn">cp.async</span>.cg.shared.global   [smem_A + (k+1)*stride], [gmem_A + (k+1)*stride], 16;
+<span class="fn">cp.async</span>.cg.shared.global   [smem_B + (k+1)*stride], [gmem_B + (k+1)*stride], 16;
+<span class="fn">cp.async</span>.commit_group;       <span class="cm">// snapshot the in-flight copies</span>
+
+<span class="fn">mma.sync</span>.aligned.m16n8k16   d, a[k], b[k], c;   <span class="cm">// compute stage k on already-loaded data</span>
+
+<span class="fn">cp.async</span>.wait_group 1;       <span class="cm">// before next iter, ensure k+1's load has landed</span>
+<span class="fn">__syncthreads</span>();</pre>
+
+  <p>
+    With this primitive, a single CTA can now run its own software pipeline:
+    issue the load for tile <i>k+1</i>, do the MMA for tile <i>k</i>, store the
+    result for tile <i>k–1</i>, all in flight at once.
+  </p>
+
+  <pre class="timing"><span class="cm">// single CTA · in-kernel software pipeline (Ampere)</span>
+CTA0 │ ─[Load k]──[Load k+1]──[Load k+2]─────────
+     │         ─[MMA  k  ]──[MMA  k+1]──[MMA k+2]
+     │                   ─[Store k–1 ]──[Store k ]─</pre>
+
+  <p>
+    The win is bigger than just hiding latency. Because overlap is now happening
+    <i>inside</i> the CTA, you no longer need to slice tiles small enough to fit
+    several CTAs on an SM. One large CTA per SM — using all the registers and
+    all the shared memory — is now the productive choice. The occupancy gymnastics
+    of the previous section dissolves into a straightforward double- or
+    triple-buffered loop.
+  </p>
+
+  <p>
+    What Ampere did <i>not</i> fix is the rest of the per-tile bookkeeping:
+    every CTA still launches from the host, every CTA still computes its own
+    block indices and prologue, and every CTA still terminates after its tile.
+    On A100 the kernel launch + setup overhead is single-digit microseconds,
+    which is fine if your tiles are big but ruinous when they aren't. That bill
+    is what Hopper picked up.
+  </p>
+
+  <hr class="rule" />
+
+  <h2><span class="num">03</span> Hopper: TMA, WGMMA, and the <em>persistent kernel</em></h2>
+
+  <p>
+    Hopper's tensor-core story is built on three additions that compose
+    cleanly: the <b>Tensor Memory Accelerator</b> for asynchronous tile
+    movement, asynchronous <b>warpgroup MMA</b> for issuing compute that
+    doesn't block the warp, and the <b>persistent kernel</b> programming model
+    that the first two make possible.
+  </p>
+
+  <h3>TMA: hardware that moves tiles, not threads</h3>
+
+  <p>
+    On Ampere, even <code>cp.async</code> is a per-thread operation: each thread
+    computes the address it's responsible for and issues its own copy. For a
+    matmul tile, that's a lot of cooperative address arithmetic with a lot of
+    edge cases (swizzling, padding, boundary tiles). TMA replaces all of that
+    with a single instruction issued by a single thread that describes a tile
+    in terms of a <i>tensor descriptor</i> — origin, shape, stride — and asks
+    the hardware to move it asynchronously from global to shared memory.
+  </p>
+
+  <p>
+    The address arithmetic, vectorization, and swizzling all happen in a
+    dedicated hardware unit. From the kernel's perspective you set up the
+    descriptor once, issue a copy, and synchronize on an mbarrier when you need
+    the data. The thread that issues the copy doesn't even need to be in the
+    warp that will eventually consume it.
+  </p>
+
+  <h3>WGMMA: MMA that doesn't block its warp</h3>
+
+  <p>
+    Ampere's <code>mma.sync</code> instruction is synchronous — when you issue
+    it, the warp blocks until the MMA is done and the result is in registers.
+    Hopper introduces <code>wgmma.mma_async</code> ("warpgroup MMA"), which is
+    issued by a four-warp group, executes asynchronously on the Tensor Cores,
+    and lets the issuing warps continue executing other instructions while the
+    MMA is in flight. You fence on the result with <code>wgmma.wait_group</code>
+    when you actually need it.
+  </p>
+
+  <p>
+    The combination of TMA and WGMMA is what makes overlap inside a Hopper
+    kernel feel categorically different from Ampere. On Ampere you could overlap
+    a memory copy with a compute instruction. On Hopper you can overlap a
+    memory copy, multiple in-flight MMAs, <i>and</i> the address arithmetic of
+    the next iteration, all on the same warpgroup, with the hardware doing the
+    bookkeeping.
+  </p>
+
+  <h3>Persistent kernels: stop relaunching</h3>
+
+  <p>
+    Once you can keep arbitrary work in flight inside a CTA, the natural next
+    move is to stop ending the CTA at all. A <b>persistent kernel</b> is a
+    matmul kernel where each CTA launches once, claims a stream of tiles from
+    a global counter, and processes them one after another without returning
+    to the host. The launch overhead is paid once for the whole problem
+    instead of once per tile, and — more importantly — the boundary between
+    one tile and the next becomes a place where you can pipeline.
+  </p>
+
+  <pre class="timing"><span class="cm">// persistent CTA · cross-tile pipelining (Hopper)</span>
+CTA stays resident on the SM, processing tiles N–1, N, N+1, …
+
+  TMA store ─┐
+  tile N–1   │
+             ├──┐
+  WGMMA      │  │ Tensor cores ─┐
+  tile N     │  │  computing    │
+             │  │               ├──┐
+  TMA load   │  │               │  │
+  tile N+1   ┘  ┘  ──→ in flight together ──→</pre>
+
+  <p>
+    On Hopper, that picture is real: the output of one tile being written back
+    to global memory, the MMA of the next tile running on Tensor Cores, and
+    the TMA for the tile after that streaming in from HBM — all running
+    concurrently inside a CTA that never went home.
+  </p>
+
+  <p>
+    The catch is that WGMMA consumers use a lot of registers. Each warpgroup
+    asking for a big accumulator tile is asking for hundreds of registers per
+    thread to hold partial sums, and those registers come out of the same SM
+    budget that occupancy, async barriers, and the rest of the program all
+    have to share. Worse, the Tensor Cores and the ALU paths inside the SM
+    compete for issue slots: a kernel that wants to do a lot of epilogue work
+    (elementwise scaling, bias add, activation, quantization) in registers
+    starts trading off MMA throughput against the same resources. That tension
+    is what Blackwell goes after.
+  </p>
+
+  <hr class="rule" />
+
+  <h2><span class="num">04</span> Blackwell: <em>tensor memory</em> and a true three-stage pipeline</h2>
+
+  <p>
+    The Blackwell architecture introduces a new MMA family — exposed in PTX as
+    <code>tcgen05.mma</code> — whose accumulator <b>does not live in registers
+    at all</b>. Instead, results go into a dedicated on-chip pool called
+    <b>tensor memory</b>, sized and scheduled independently of the register
+    file. Stores back to global memory read from tensor memory directly.
+  </p>
+
+  <p class="pull">
+    On Blackwell, the accumulator gets its own pool of silicon. Registers stop
+    being the bottleneck nobody talks about.
+  </p>
+
+  <p>
+    The consequence is that the three things a matmul kernel does — load,
+    compute, store — now live on three independent memory regions and can be
+    in flight on three independent tiles at the same time:
+  </p>
+
+  <pre class="timing"><span class="cm">// persistent CTA · three-stage pipeline (Blackwell)</span>
+
+  stage A · TMA load            tile N+1   ──→ shared memory
+  stage B · tcgen05 compute     tile N     ──→ tensor memory
+  stage C · async store         tile N–1   ──→ global memory
+
+                ↑ three different memory regions, three different tiles ↑
+                       in flight concurrently inside one CTA</pre>
+
+  <p class="caption">Each stage runs on its own hardware: TMA engines on the load side, Tensor Cores into tensor memory in the middle, and async copies from tensor memory on the store side.</p>
+
+  <p>
+    Two things change in practice. First, accumulator size stops competing
+    with register pressure: a kernel that wants 256×256 accumulators no longer
+    pays for it by losing occupancy. Second, the epilogue can run on the
+    integer / FP32 ALU paths in parallel with the Tensor Cores, because the
+    accumulator doesn't need to be staged through registers to be operated
+    on. The bias add, the scale, the quantization can fuse into the store stage
+    without stealing issue slots from the next MMA.
+  </p>
+
+  <p>
+    The result is the cleanest software pipeline NVIDIA has shipped: three
+    stages, three hardware units, three tiles, all overlapped, all running
+    inside a single persistent CTA that paid its launch cost once at the
+    start of the problem.
+  </p>
+
+  <hr class="rule" />
+
+  <h2><span class="num">05</span> The pattern, <em>restated</em></h2>
+
+  <p>
+    Put the four architectures next to each other and the pattern becomes
+    impossible to miss:
+  </p>
+
+  <div class="gen-wrap">
+    <table class="gen">
+      <thead>
+        <tr>
+          <th>Gen</th>
+          <th>What it added</th>
+          <th>What it fixed</th>
+          <th>What it left exposed</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="label">Pre-Ampere</td>
+          <td>(baseline)</td>
+          <td class="win">—</td>
+          <td class="prob">Memory blocks compute; multi-CTA workaround forces small tiles</td>
+        </tr>
+        <tr>
+          <td class="label">Ampere</td>
+          <td><code>cp.async</code></td>
+          <td class="win">In-CTA overlap of loads and MMA</td>
+          <td class="prob">Per-tile launch + setup overhead</td>
+        </tr>
+        <tr>
+          <td class="label">Hopper</td>
+          <td>TMA, WGMMA, persistent kernels</td>
+          <td class="win">Cross-tile overlap; launch cost amortized</td>
+          <td class="prob">Register pressure from WGMMA; Tensor Core ↔ ALU issue contention</td>
+        </tr>
+        <tr>
+          <td class="label">Blackwell</td>
+          <td><code>tcgen05</code> + tensor memory</td>
+          <td class="win">Accumulator off the register file; clean three-stage pipeline</td>
+          <td class="prob">?</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>
+    Every generation's "fixed" column is the previous generation's "left
+    exposed" column. That isn't a coincidence — the way you make a real
+    workload faster is to find the longest pole and shorten it, and on a
+    matmul-shaped workload the longest pole has migrated, neatly, from
+    memory-blocking-compute to launch overhead to register pressure to
+    whatever the next one turns out to be.
+  </p>
+
+  <hr class="rule" />
+
+  <h2><span class="num">06</span> Where the bottleneck <em>moves next</em></h2>
+
+  <p>
+    With the three big in-kernel constraints resolved — synchronous memory,
+    relaunch cost, register-bound accumulators — the interesting candidates for
+    the next bottleneck have moved out of the SM:
+  </p>
+
+  <ul>
+    <li>
+      <b>Cross-CTA / cross-SM communication.</b> Now that a single CTA can
+      saturate its Tensor Cores, the next gain comes from making cooperating
+      CTAs share data and reductions without going back through HBM. Hopper's
+      distributed shared memory (the SM-to-SM "thread block cluster") is the
+      first move in this direction; it's not hard to imagine that becoming
+      the central abstraction rather than a side feature.
+    </li>
+    <li>
+      <b>Instruction issue.</b> When the hardware units are independent and
+      the data is staged, the scheduler choosing which instruction to issue
+      next becomes a real cost. Persistent kernels with three-stage pipelines
+      already push hard on the front end; future workloads (more epilogue
+      fusion, more attention variants, more sparsity) push harder.
+    </li>
+    <li>
+      <b>Off-chip bandwidth and topology.</b> NVLink Switch, NVL72, GB200 — at
+      cluster scale the bottleneck stops being inside the SM at all and starts
+      being whether the system can keep the GPUs fed. The matmul kernel is
+      asynchronous; now the rest of the stack has to catch up.
+    </li>
+  </ul>
+
+  <p>
+    None of these is a guess at what Blackwell-Ultra or Rubin will actually
+    add. The point is narrower: the pattern of "find the longest pole, kill
+    it, ship the next architecture" has been remarkably consistent for half a
+    decade of NVIDIA silicon, and the longest poles that remain are no longer
+    inside the SM. That's a useful thing to know if you're deciding what kind
+    of kernel to optimize this quarter.
+  </p>
+
+  <div class="refs">
+    <h3>References</h3>
+    <ol>
+      <li>NVIDIA, <i>CUDA C++ Programming Guide — Asynchronous Data Copies</i>. <a href="https://docs.nvidia.com/cuda/cuda-c-programming-guide/">docs.nvidia.com/cuda</a></li>
+      <li>NVIDIA, <i>Hopper Tuning Guide</i> — TMA, WGMMA, distributed shared memory. <a href="https://docs.nvidia.com/cuda/hopper-tuning-guide/">docs.nvidia.com/cuda/hopper-tuning-guide</a></li>
+      <li>NVIDIA, <i>PTX ISA</i> — <code>cp.async</code>, <code>wgmma.mma_async</code>, <code>tcgen05.mma</code>. <a href="https://docs.nvidia.com/cuda/parallel-thread-execution/">docs.nvidia.com/cuda/parallel-thread-execution</a></li>
+      <li>CUTLASS — NVIDIA's reference implementation of the patterns described above. <a href="https://github.com/NVIDIA/cutlass">github.com/NVIDIA/cutlass</a></li>
+    </ol>
+  </div>
+
+  <!-- ═════════ COMMENTS ═════════ -->
+  <section class="comments" id="comments">
+    <span class="comments-eyebrow">Discussion</span>
+    <h2>Comments &amp; <em>responses</em></h2>
+    <p class="comments-intro">
+      Reply with your GitHub account. Comments are stored as
+      <a href="https://github.com/DiegoCao/DiegoCao.github.io/discussions">GitHub Discussions</a>
+      on this repo — no separate database, no third-party service holding your
+      data. The integration is powered by <a href="https://giscus.app">Giscus</a>.
+    </p>
+
+    <div class="giscus-wrap">
+      <script src="https://giscus.app/client.js"
+              data-repo="DiegoCao/DiegoCao.github.io"
+              data-repo-id="MDEwOlJlcG9zaXRvcnkzMjA1MTUzOTc="
+              data-category="General"
+              data-category-id="DIC_kwDOExqtRc4C-AQf"
+              data-mapping="pathname"
+              data-strict="0"
+              data-reactions-enabled="1"
+              data-emit-metadata="0"
+              data-input-position="bottom"
+              data-theme="light"
+              data-lang="en"
+              data-loading="lazy"
+              crossorigin="anonymous"
+              async>
+      </script>
+    </div>
+  </section>
+
+  <div class="post-foot">
+    Hangrui Cao · 2026.06.14 · <a href="index.html">More writing</a> · <a href="../index.html#contact">Contact</a> · <a href="#comments">Comments</a>
+  </div>
+
+</article>
+
+</body>
+</html>
